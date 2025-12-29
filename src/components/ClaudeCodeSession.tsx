@@ -1434,7 +1434,7 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
     <div
       ref={parentRef}
       className="flex-1 overflow-y-auto relative"
-      style={{ paddingBottom: '200px' }}
+      style={{ paddingBottom: '280px' }}
     >
       <div className="w-full max-w-6xl mx-auto px-4 py-4">
         {filteredMessages.map((message, index) => (

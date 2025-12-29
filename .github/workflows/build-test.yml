@@ -28,15 +28,15 @@ jobs:
           - name: Linux
             os: ubuntu-latest
             rust-target: x86_64-unknown-linux-gnu
-          - name: Linux ARM64
-            os: ubuntu-24.04-arm64
-            rust-target: aarch64-unknown-linux-gnu
           - name: Windows
             os: windows-latest
             rust-target: x86_64-pc-windows-msvc
-          - name: macOS
-            os: macos-latest
+          - name: macOS Intel
+            os: macos-13
             rust-target: x86_64-apple-darwin
+          - name: macOS ARM64
+            os: macos-14
+            rust-target: aarch64-apple-darwin
     
     runs-on: ${{ matrix.platform.os }}
     
@@ -49,7 +49,7 @@ jobs:
 
       # Install system dependencies for Linux
       - name: Install Linux dependencies
-        if: matrix.platform.os == 'ubuntu-latest'
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -156,11 +156,12 @@ jobs:
             **Status**: ${status}
             **Commit**: ${{ github.event.pull_request.head.sha || github.sha }}
             
-            | Platform | Status |
-            |----------|--------|
-            | Linux    | ${{ contains(needs.build-test.result, 'success') && '✅' || '❌' }} |
-            | Windows  | ${{ contains(needs.build-test.result, 'success') && '✅' || '❌' }} |
-            | macOS    | ${{ contains(needs.build-test.result, 'success') && '✅' || '❌' }} |
+            | Platform      | Status |
+            |---------------|--------|
+            | Linux         | ${{ contains(needs.build-test.result, 'success') && '✅' || '❌' }} |
+            | Windows       | ${{ contains(needs.build-test.result, 'success') && '✅' || '❌' }} |
+            | macOS Intel   | ${{ contains(needs.build-test.result, 'success') && '✅' || '❌' }} |
+            | macOS ARM64   | ${{ contains(needs.build-test.result, 'success') && '✅' || '❌' }} |
             
             [View full workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})`;
             

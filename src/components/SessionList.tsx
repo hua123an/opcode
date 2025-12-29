@@ -102,10 +102,10 @@ export const SessionList: React.FC<SessionListProps> = ({
               >
                 <Card
                   className={cn(
-                    "p-4 h-full cursor-pointer group relative overflow-hidden transition-all duration-300",
-                    "glass-card border-white/5 hover:border-primary/20",
-                    "bg-gradient-to-br from-card/50 to-card/10",
-                    session.todo_data && "border-primary/20 bg-primary/5"
+                    "p-4 h-full cursor-pointer group relative overflow-hidden transition-all duration-200",
+                    "border border-border hover:border-primary/30 bg-card",
+                    "hover:shadow-md",
+                    session.todo_data && "border-primary/30 bg-primary/5"
                   )}
                   onClick={() => {
                     // Emit a special event for Claude Code session navigation

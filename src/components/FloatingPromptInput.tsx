@@ -923,7 +923,7 @@ const FloatingPromptInputInner = (
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="w-full max-w-4xl h-[60vh] flex flex-col glass-card rounded-2xl overflow-hidden shadow-2xl relative"
+                className="w-full max-w-4xl h-[60vh] flex flex-col bg-card border border-border rounded-2xl overflow-hidden shadow-2xl relative"
                 onClick={(e) => e.stopPropagation()}
               >
                 <div className="flex items-center justify-between p-4 border-b">

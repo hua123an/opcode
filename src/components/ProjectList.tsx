@@ -143,8 +143,8 @@ export const ProjectList: React.FC<ProjectListProps> = ({
         <div className="flex-1 overflow-y-auto p-6">
           {/* Recent projects section */}
           {displayedProjects.length > 0 ? (
-            <Card className="p-1 border-0 bg-transparent shadow-none">
-              <div className="glass-card rounded-xl overflow-hidden p-6 border border-white/5 bg-gradient-to-b from-card/50 to-card/10 backdrop-blur-md">
+            <Card className="p-0 border border-border bg-card shadow-sm rounded-xl overflow-hidden">
+              <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-semibold tracking-tight">Recent Projects</h2>
                   {!showAll ? (
@@ -256,7 +256,7 @@ export const ProjectList: React.FC<ProjectListProps> = ({
             </Card>
           ) : (
             <div className="h-full flex items-center justify-center -mt-10">
-              <div className="glass-card rounded-2xl p-12 max-w-lg w-full text-center border border-white/5 bg-gradient-to-b from-card/50 to-card/10 backdrop-blur-md shadow-2xl">
+              <div className="rounded-2xl p-12 max-w-lg w-full text-center border border-border bg-card shadow-lg">
                 <div className="w-20 h-20 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 mx-auto ring-4 ring-primary/5">
                   <FolderOpen className="h-10 w-10 text-primary" />
                 </div>

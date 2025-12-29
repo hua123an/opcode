@@ -1,4 +1,23 @@
 import React, { useState } from "react";
+
+// Utility function to filter out CLI warning/debug messages
+const filterCliWarnings = (content: string): string => {
+  if (!content) return content;
+
+  const warningPatterns = [
+    '⚠️ [BashTool] Pre-flight check is taking longer than expected',
+    'Run with ANTHROPIC_LOG=debug',
+    'Pre-flight check is taking longer',
+    '[BashTool]',
+    'ANTHROPIC_LOG=debug to check for failed or slow API requests',
+  ];
+
+  const lines = content.split('\n');
+  const filteredLines = lines.filter((line: string) =>
+    !warningPatterns.some(pattern => line.includes(pattern))
+  );
+  return filteredLines.join('\n').trim();
+};
 import {
   CheckCircle2,
   Circle,
@@ -689,6 +708,9 @@ export const BashWidget: React.FC<{
         resultContent = JSON.stringify(result.content, null, 2);
       }
     }
+
+    // Filter out CLI warning messages
+    resultContent = filterCliWarnings(resultContent);
   }
 
   return (

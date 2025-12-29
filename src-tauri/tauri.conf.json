@@ -5,7 +5,7 @@
   "identifier": "opcode.asterisk.so",
   "build": {
     "beforeDevCommand": "",
-    "beforeBuildCommand": "bun run build",
+    "beforeBuildCommand": "npm run build",
     "frontendDist": "../dist"
   },
   "app": {

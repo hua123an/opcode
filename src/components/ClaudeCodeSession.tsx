@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import { useVirtualizer } from "@tanstack/react-virtual";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Copy,
@@ -1388,8 +1387,8 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
     };
   }, [effectiveSession, projectPath]);
 
-  // Filter messages for virtualization - remove null-rendering items upfront
-  const virtualizedMessages = useMemo(() => {
+  // Filter messages - remove null-rendering items upfront
+  const filteredMessages = useMemo(() => {
     return displayableMessages.filter(message => {
       // Skip system:init messages
       if (message.type === 'system' && (message.subtype === 'init' || (message.tools && message.tools.length > 0))) {
@@ -1411,105 +1410,57 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
     });
   }, [displayableMessages]);
 
-  // Setup virtualizer for message list
-  const rowVirtualizer = useVirtualizer({
-    count: virtualizedMessages.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 150, // Estimated height per message
-    overscan: 3, // Render 3 extra items above/below viewport
-  });
-
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
-    if (virtualizedMessages.length > 0 && parentRef.current) {
-      // Only auto-scroll if we're already near the bottom
+    if (filteredMessages.length > 0 && parentRef.current) {
       const scrollElement = parentRef.current;
       const isNearBottom = scrollElement.scrollHeight - scrollElement.scrollTop - scrollElement.clientHeight < 200;
       if (isNearBottom) {
-        rowVirtualizer.scrollToIndex(virtualizedMessages.length - 1, { align: 'end', behavior: 'auto' });
+        setTimeout(() => {
+          scrollElement.scrollTo({
+            top: scrollElement.scrollHeight,
+            behavior: 'smooth'
+          });
+        }, 50);
       }
     }
-  }, [virtualizedMessages.length, rowVirtualizer]);
+  }, [filteredMessages.length]);
 
-  // Virtualized message list rendering
+  // Simple non-virtualized message list - more stable than virtualization
   const messagesList = (
     <div
       ref={parentRef}
       className="flex-1 overflow-y-auto relative"
+      style={{ paddingBottom: '200px' }}
     >
-      <div
-        style={{
-          height: `${rowVirtualizer.getTotalSize()}px`,
-          width: '100%',
-          position: 'relative',
-        }}
-      >
-        <div
-          className="w-full max-w-6xl mx-auto px-4"
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-          }}
-        >
-          {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-            const message = virtualizedMessages[virtualRow.index];
-            return (
-              <div
-                key={message.uuid || message.session_id || `msg-${virtualRow.index}`}
-                data-index={virtualRow.index}
-                ref={rowVirtualizer.measureElement}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  transform: `translateY(${virtualRow.start}px)`,
-                  paddingBottom: '16px',
-                }}
-              >
-                <StreamMessage
-                  message={message}
-                  streamMessages={messages}
-                  onLinkDetected={handleLinkDetected}
-                />
-              </div>
-            );
-          })}
-        </div>
+      <div className="w-full max-w-6xl mx-auto px-4 py-4">
+        {filteredMessages.map((message, index) => (
+          <div
+            key={message.uuid || message.session_id || `msg-${index}`}
+            className="mb-4"
+          >
+            <StreamMessage
+              message={message}
+              streamMessages={messages}
+              onLinkDetected={handleLinkDetected}
+            />
+          </div>
+        ))}
       </div>
 
-      {/* Loading indicator under the latest message */}
+      {/* Loading indicator */}
       {isLoading && (
-        <div
-          className="flex items-center justify-center py-4"
-          style={{
-            position: 'sticky',
-            bottom: 0,
-            background: 'linear-gradient(to top, var(--color-background) 50%, transparent)',
-            paddingBottom: '200px',
-          }}
-        >
+        <div className="flex items-center justify-center py-4">
           <div className="rotating-symbol text-primary" />
         </div>
       )}
 
       {/* Error indicator */}
       {error && (
-        <div
-          className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive w-full max-w-6xl mx-auto"
-          style={{
-            position: 'sticky',
-            bottom: 200,
-          }}
-        >
+        <div className="rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive w-full max-w-6xl mx-auto">
           {error}
         </div>
       )}
-
-      {/* Bottom padding for input */}
-      <div style={{ height: '200px' }} />
     </div>
   );
 
@@ -1715,9 +1666,12 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
                         variant="ghost"
                         size="sm"
                         onClick={() => {
-                          // Scroll to bottom using virtualizer
-                          if (virtualizedMessages.length > 0) {
-                            rowVirtualizer.scrollToIndex(virtualizedMessages.length - 1, { align: 'end', behavior: 'smooth' });
+                          // Scroll to bottom
+                          if (filteredMessages.length > 0 && parentRef.current) {
+                            parentRef.current.scrollTo({
+                              top: parentRef.current.scrollHeight,
+                              behavior: 'smooth'
+                            });
                           }
                         }}
                         className="px-3 py-2 hover:bg-accent rounded-none"

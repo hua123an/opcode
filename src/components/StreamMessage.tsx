@@ -157,9 +157,26 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
                   // Text content - render as markdown
                   if (content.type === "text") {
                     // Ensure we have a string to render
-                    const textContent = typeof content.text === 'string'
+                    let textContent = typeof content.text === 'string'
                       ? content.text
                       : (content.text?.text || JSON.stringify(content.text || content));
+
+                    // Filter out CLI warning/debug messages that shouldn't be shown
+                    const warningPatterns = [
+                      'Pre-flight check is taking longer than expected',
+                      'ANTHROPIC_LOG=debug',
+                      '[BashTool]',
+                      'Run with ANTHROPIC_LOG',
+                    ];
+
+                    if (warningPatterns.some(pattern => textContent.includes(pattern))) {
+                      return null; // Skip this warning message
+                    }
+
+                    // Skip empty or whitespace-only content
+                    if (!textContent.trim()) {
+                      return null;
+                    }
 
                     renderedSomething = true;
                     return (

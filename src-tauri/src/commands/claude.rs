@@ -901,6 +901,16 @@ async fn spawn_claude_process(
     let stderr_task = tokio::spawn(async move {
         let mut lines = stderr_reader.lines();
         while let Ok(Some(line)) = lines.next_line().await {
+            // Filter out known warning messages that shouldn't be shown to users
+            let should_skip = line.contains("Pre-flight check is taking longer") ||
+                              line.contains("ANTHROPIC_LOG=debug") ||
+                              line.contains("[BashTool]");
+            
+            if should_skip {
+                log::debug!("Filtered Claude CLI warning: {}", line);
+                continue;
+            }
+            
             log::error!("Claude stderr: {}", line);
             // Emit error lines to the frontend with session isolation if we have session ID
             if let Some(ref session_id) = *session_id_holder_clone2.lock().unwrap() {

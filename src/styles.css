@@ -1042,42 +1042,23 @@ code::-webkit-scrollbar-thumb:hover {
   animation: moveToInput 0.8s ease-in-out forwards;
 }
 
-/* Nebula/Mesh Gradient Animation */
-@keyframes nebula {
-  0% {
-    background-position: 0% 50%;
-  }
-
-  50% {
-    background-position: 100% 50%;
-  }
-
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
+/* Simplified static gradient background */
 .mesh-gradient {
-  background: radial-gradient(at 0% 0%, color-mix(in srgb, var(--color-primary), transparent 92%) 0, transparent 55%),
-    radial-gradient(at 100% 0%, color-mix(in srgb, var(--color-accent), transparent 94%) 0, transparent 55%),
-    radial-gradient(at 50% 100%, color-mix(in srgb, var(--color-primary), transparent 94%) 0, transparent 55%);
-  background-size: 200% 200%;
-  animation: nebula 12s ease infinite;
+  background: radial-gradient(at 0% 0%, color-mix(in srgb, var(--color-primary), transparent 95%) 0, transparent 40%),
+    radial-gradient(at 100% 100%, color-mix(in srgb, var(--color-accent), transparent 96%) 0, transparent 40%);
 }
 
-/* Message slide-up entrance */
+/* Simple fade entrance */
 .message-slide-up {
-  animation: slide-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: fade-in 0.2s ease-out forwards;
 }
 
-@keyframes slide-up {
+@keyframes fade-in {
   from {
     opacity: 0;
-    transform: translateY(16px) scale(0.995);
   }
 
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
   }
 }

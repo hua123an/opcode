@@ -2360,34 +2360,26 @@ export const ThinkingWidget: React.FC<{
   const trimmedThinking = thinking.trim();
 
   return (
-    <div className="rounded-xl border border-primary/20 bg-primary/5 overflow-hidden transition-all duration-300">
+    <div className="rounded-lg border border-muted bg-muted/30 overflow-hidden">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full px-5 py-3.5 flex items-center justify-between hover:bg-primary/10 transition-colors group"
+        className="w-full px-4 py-2.5 flex items-center justify-between hover:bg-muted/50 transition-colors"
       >
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <div className="absolute inset-0 bg-primary/20 rounded-full blur-sm animate-pulse" />
-            <Sparkles className="h-4 w-4 text-primary animate-spin-slow relative z-10" />
-          </div>
-          <span className="text-sm font-semibold tracking-tight text-primary/80 italic group-hover:text-primary transition-colors">
-            Neural Process Active...
-          </span>
-        </div>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] font-bold text-primary/40 tracking-widest uppercase">
-            {isExpanded ? "Collapse" : "Inspect"}
+          <Sparkles className="h-3.5 w-3.5 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground italic">
+            Thinking...
           </span>
-          <ChevronRight className={cn(
-            "h-4 w-4 text-primary/40 transition-transform duration-300",
-            isExpanded && "rotate-90"
-          )} />
         </div>
+        <ChevronRight className={cn(
+          "h-4 w-4 text-muted-foreground transition-transform",
+          isExpanded && "rotate-90"
+        )} />
       </button>
 
       {isExpanded && (
-        <div className="px-5 pb-5 pt-2 border-t border-primary/10">
-          <pre className="text-xs font-mono text-foreground/80 whitespace-pre-wrap bg-primary/5 p-4 rounded-xl border border-primary/10 leading-relaxed">
+        <div className="px-4 pb-4 pt-2 border-t border-muted">
+          <pre className="text-xs font-mono text-muted-foreground whitespace-pre-wrap bg-muted/30 p-3 rounded-lg">
             {trimmedThinking}
           </pre>
         </div>

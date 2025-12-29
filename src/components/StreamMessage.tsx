@@ -149,21 +149,17 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
 
       const renderedCard = (
         <div className={cn(
-          "group relative py-6 px-1 first:pt-4 transition-all duration-500 animate-in fade-in slide-in-from-bottom-3",
+          "group relative py-4 px-1",
           className
         )}>
-          {/* Subtle background glow/gradient for assistant messages */}
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
-
-          <div className="flex items-start gap-5">
-            <div className="flex flex-col items-center gap-2 pt-1 shrink-0">
-              <div className="relative p-2 rounded-xl bg-primary/5 text-primary border border-primary/20 shadow-glow">
-                <Bot className="h-4.5 w-4.5" />
-                <div className="absolute inset-0 rounded-xl bg-primary/10 animate-pulse -z-10" />
+          <div className="flex items-start gap-4">
+            <div className="flex flex-col items-center pt-0.5 shrink-0">
+              <div className="p-1.5 rounded-lg bg-primary/10 text-primary">
+                <Bot className="h-4 w-4" />
               </div>
             </div>
 
-            <div className="flex-1 space-y-4 min-w-0">
+            <div className="flex-1 space-y-3 min-w-0">
               {msg.content && Array.isArray(msg.content) && msg.content.map((content: any, idx: number) => {
                 // Text content - render as markdown
                 if (content.type === "text") {
@@ -439,16 +435,16 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
 
       const renderedCard = (
         <div className={cn(
-          "group relative py-4 px-2 hover:bg-muted/10 transition-all duration-300 rounded-2xl animate-in fade-in slide-in-from-bottom-2",
+          "group relative py-3 px-3 rounded-lg bg-muted/30",
           className
         )}>
-          <div className="flex items-start gap-5">
-            <div className="flex flex-col items-center pt-1 shrink-0">
-              <div className="p-1.5 rounded-lg bg-secondary/80 text-secondary-foreground shadow-sm">
+          <div className="flex items-start gap-4">
+            <div className="flex flex-col items-center pt-0.5 shrink-0">
+              <div className="p-1.5 rounded-lg bg-secondary text-secondary-foreground">
                 <User className="h-4 w-4" />
               </div>
             </div>
-            <div className="flex-1 space-y-2 min-w-0 pt-0.5">
+            <div className="flex-1 space-y-2 min-w-0">
               {/* Handle content that is a simple string (e.g. from user commands) */}
               {(typeof msg.content === 'string' || (msg.content && !Array.isArray(msg.content))) && (
                 (() => {
@@ -478,7 +474,7 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
 
                   // Otherwise render as plain text
                   return (
-                    <div className="text-sm/relaxed text-foreground/90 whitespace-pre-wrap">
+                    <div className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'var(--color-foreground)' }}>
                       {contentStr}
                     </div>
                   );
@@ -487,6 +483,18 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
 
               {/* Handle content that is an array of parts */}
               {Array.isArray(msg.content) && msg.content.map((content: any, idx: number) => {
+                // Text content - render as plain text
+                if (content.type === "text") {
+                  const textContent = typeof content.text === 'string' ? content.text : String(content.text || '');
+                  if (!textContent.trim()) return null;
+                  renderedSomething = true;
+                  return (
+                    <div key={idx} className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'var(--color-foreground)' }}>
+                      {textContent}
+                    </div>
+                  );
+                }
+
                 // Tool result (User role can contain tool results in some API versions/contexts)
                 if (content.type === "tool_result") {
                   // Extract content logic...

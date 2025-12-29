@@ -137,6 +137,8 @@ export const TodoWidget: React.FC<{ todos: any[]; result?: any }> = ({ todos, re
     low: "bg-green-500/10 text-green-500 border-green-500/20"
   };
 
+  const { theme } = useTheme();
+
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2 mb-3">
@@ -148,7 +150,8 @@ export const TodoWidget: React.FC<{ todos: any[]; result?: any }> = ({ todos, re
           <div
             key={todo.id || idx}
             className={cn(
-              "flex items-start gap-3 p-3 rounded-lg border bg-card/50",
+              "flex items-start gap-3 p-3 rounded-lg border transition-colors",
+              (theme === 'dark' || theme === 'gray') ? "bg-card/50 border-white/5" : "bg-muted/30 border-black/5",
               todo.status === "completed" && "opacity-60"
             )}
           >
@@ -182,6 +185,7 @@ export const TodoWidget: React.FC<{ todos: any[]; result?: any }> = ({ todos, re
  * Widget for LS (List Directory) tool
  */
 export const LSWidget: React.FC<{ path: string; result?: any }> = ({ path, result }) => {
+  const { theme } = useTheme();
   // If we have a result, show it using the LSResultWidget
   if (result) {
     let resultContent = '';
@@ -201,7 +205,10 @@ export const LSWidget: React.FC<{ path: string; result?: any }> = ({ path, resul
 
     return (
       <div className="space-y-2">
-        <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50">
+        <div className={cn(
+          "flex items-center gap-2 p-3 rounded-lg border transition-colors",
+          (theme === 'dark' || theme === 'gray') ? "bg-muted/50 border-white/5" : "bg-muted/30 border-black/5"
+        )}>
           <FolderOpen className="h-4 w-4 text-primary" />
           <span className="text-sm">Directory contents for:</span>
           <code className="text-sm font-mono bg-background px-2 py-0.5 rounded">
@@ -405,6 +412,7 @@ export const LSResultWidget: React.FC<{ content: string }> = ({ content }) => {
  * Widget for Read tool
  */
 export const ReadWidget: React.FC<{ filePath: string; result?: any }> = ({ filePath, result }) => {
+  const { theme } = useTheme();
   // If we have a result, show it using the ReadResultWidget
   if (result) {
     let resultContent = '';
@@ -424,7 +432,10 @@ export const ReadWidget: React.FC<{ filePath: string; result?: any }> = ({ fileP
 
     return (
       <div className="space-y-2">
-        <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50">
+        <div className={cn(
+          "flex items-center gap-2 p-3 rounded-lg border transition-colors",
+          (theme === 'dark' || theme === 'gray') ? "bg-muted/50 border-white/5" : "bg-muted/30 border-black/5"
+        )}>
           <FileText className="h-4 w-4 text-primary" />
           <span className="text-sm">File content:</span>
           <code className="text-sm font-mono bg-background px-2 py-0.5 rounded flex-1 truncate">
@@ -437,7 +448,10 @@ export const ReadWidget: React.FC<{ filePath: string; result?: any }> = ({ fileP
   }
 
   return (
-    <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50">
+    <div className={cn(
+      "flex items-center gap-2 p-3 rounded-lg border transition-colors",
+      (theme === 'dark' || theme === 'gray') ? "bg-muted/50 border-white/5" : "bg-muted/30 border-black/5"
+    )}>
       <FileText className="h-4 w-4 text-primary" />
       <span className="text-sm">Reading file:</span>
       <code className="text-sm font-mono bg-background px-2 py-0.5 rounded flex-1 truncate">
@@ -629,6 +643,7 @@ export const ReadResultWidget: React.FC<{ content: string; filePath?: string }> 
  * Widget for Glob tool
  */
 export const GlobWidget: React.FC<{ pattern: string; result?: any }> = ({ pattern, result }) => {
+  const { theme } = useTheme();
   // Extract result content if available
   let resultContent = '';
   let isError = false;
@@ -652,7 +667,10 @@ export const GlobWidget: React.FC<{ pattern: string; result?: any }> = ({ patter
 
   return (
     <div className="space-y-2">
-      <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50">
+      <div className={cn(
+        "flex items-center gap-2 p-3 rounded-lg border transition-colors",
+        (theme === 'dark' || theme === 'gray') ? "bg-muted/50 border-white/5" : "bg-muted/30 border-black/5"
+      )}>
         <Search className="h-4 w-4 text-primary" />
         <span className="text-sm">Searching for pattern:</span>
         <code className="text-sm font-mono bg-background px-2 py-0.5 rounded">
@@ -671,8 +689,8 @@ export const GlobWidget: React.FC<{ pattern: string; result?: any }> = ({ patter
         <div className={cn(
           "p-3 rounded-md border text-xs font-mono whitespace-pre-wrap overflow-x-auto",
           isError
-            ? "border-red-500/20 bg-red-500/5 text-red-400"
-            : "border-green-500/20 bg-green-500/5 text-green-300"
+            ? "border-red-500/20 bg-red-500/5 text-red-600 dark:text-red-400"
+            : "border-green-500/20 bg-green-500/5 text-green-700 dark:text-green-300"
         )}>
           {resultContent || (isError ? "Search failed" : "No matches found")}
         </div>

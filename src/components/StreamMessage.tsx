@@ -200,7 +200,10 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
                                   style={syntaxTheme}
                                   language={match[1]}
                                   PreTag="div"
-                                  className="rounded-lg !mt-3 !mb-3 border border-border/50 !bg-muted/30"
+                                  className={cn(
+                                    "rounded-lg !mt-3 !mb-3 border border-border/40 transition-all",
+                                    (theme === 'dark' || theme === 'gray') ? "!bg-muted/30" : "!bg-muted/40"
+                                  )}
                                   {...props}
                                 >
                                   {String(children).replace(/\n$/, '')}

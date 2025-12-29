@@ -680,7 +680,6 @@ html.is-macos body {
 .prose code {
   font-weight: 600;
   font-size: 0.875em;
-  background-color: var(--color-muted);
   padding: 0.125em 0.375em;
   border-radius: 0.25rem;
 }
@@ -693,7 +692,6 @@ html.is-macos body {
   margin-bottom: 1.714em;
   border-radius: 0.375rem;
   padding: 0.857em 1.143em;
-  background-color: var(--color-card);
 }
 
 .prose pre code {
@@ -775,7 +773,6 @@ html.is-macos body {
 
 .prose.dark\:prose-invert code {
   color: var(--color-foreground);
-  background-color: var(--color-muted);
 }
 
 .prose.dark\:prose-invert pre {

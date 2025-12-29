@@ -2357,34 +2357,37 @@ export const ThinkingWidget: React.FC<{
   signature?: string;
 }> = ({ thinking }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-
-  // Strip whitespace from thinking content
   const trimmedThinking = thinking.trim();
 
   return (
-    <div className="rounded-lg border border-gray-500/20 bg-gray-500/5 overflow-hidden">
+    <div className="rounded-xl border border-primary/20 bg-primary/5 overflow-hidden transition-all duration-300">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-500/10 transition-colors"
+        className="w-full px-5 py-3.5 flex items-center justify-between hover:bg-primary/10 transition-colors group"
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <div className="relative">
-            <Bot className="h-4 w-4 text-gray-500" />
-            <Sparkles className="h-2.5 w-2.5 text-gray-400 absolute -top-1 -right-1 animate-pulse" />
+            <div className="absolute inset-0 bg-primary/20 rounded-full blur-sm animate-pulse" />
+            <Sparkles className="h-4 w-4 text-primary animate-spin-slow relative z-10" />
           </div>
-          <span className="text-sm font-medium text-gray-600 dark:text-gray-400 italic">
-            Thinking...
+          <span className="text-sm font-semibold tracking-tight text-primary/80 italic group-hover:text-primary transition-colors">
+            Neural Process Active...
           </span>
         </div>
-        <ChevronRight className={cn(
-          "h-4 w-4 text-gray-500 transition-transform",
-          isExpanded && "rotate-90"
-        )} />
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] font-bold text-primary/40 tracking-widest uppercase">
+            {isExpanded ? "Collapse" : "Inspect"}
+          </span>
+          <ChevronRight className={cn(
+            "h-4 w-4 text-primary/40 transition-transform duration-300",
+            isExpanded && "rotate-90"
+          )} />
+        </div>
       </button>
 
       {isExpanded && (
-        <div className="px-4 pb-4 pt-2 border-t border-gray-500/20">
-          <pre className="text-xs font-mono text-gray-600 dark:text-gray-400 whitespace-pre-wrap bg-gray-500/5 p-3 rounded-lg italic">
+        <div className="px-5 pb-5 pt-2 border-t border-primary/10">
+          <pre className="text-xs font-mono text-foreground/80 whitespace-pre-wrap bg-primary/5 p-4 rounded-xl border border-primary/10 leading-relaxed">
             {trimmedThinking}
           </pre>
         </div>

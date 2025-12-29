@@ -1496,8 +1496,8 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
 
   return (
     <TooltipProvider>
-      <div className={cn("flex flex-col h-full bg-background", className)}>
-        <div className="w-full h-full flex flex-col">
+      <div className={cn("flex flex-col h-full bg-background mesh-gradient", className)}>
+        <div className="w-full h-full flex flex-col relative">
 
           {/* Main Content Area */}
           <div className={cn(

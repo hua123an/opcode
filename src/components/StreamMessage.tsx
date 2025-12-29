@@ -148,270 +148,279 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
       let renderedSomething = false;
 
       const renderedCard = (
-        <Card className={cn("border-2 border-primary/30 bg-card/60 backdrop-blur-sm shadow-md transition-all duration-300 hover:border-primary/50", className)}>
-          <CardContent className="p-5">
-            <div className="flex items-start gap-4">
-              <div className="p-1.5 rounded-lg bg-primary/10 text-primary shrink-0">
-                <Bot className="h-5 w-5" />
-              </div>
-              <div className="flex-1 space-y-3 min-w-0">
-                {msg.content && Array.isArray(msg.content) && msg.content.map((content: any, idx: number) => {
-                  // Text content - render as markdown
-                  if (content.type === "text") {
-                    // Ensure we have a string to render
-                    let textContent = typeof content.text === 'string'
-                      ? content.text
-                      : (content.text?.text || JSON.stringify(content.text || content));
+        <div className={cn(
+          "group relative py-6 px-1 first:pt-4 transition-all duration-500 animate-in fade-in slide-in-from-bottom-3",
+          className
+        )}>
+          {/* Subtle background glow/gradient for assistant messages */}
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/10 to-transparent" />
 
-                    // Filter out CLI warning/debug messages that shouldn't be shown
-                    const warningPatterns = [
-                      'Pre-flight check is taking longer than expected',
-                      'ANTHROPIC_LOG=debug',
-                      '[BashTool]',
-                      'Run with ANTHROPIC_LOG',
-                    ];
-
-                    if (warningPatterns.some(pattern => textContent.includes(pattern))) {
-                      return null; // Skip this warning message
-                    }
-
-                    // Skip empty or whitespace-only content
-                    if (!textContent.trim()) {
-                      return null;
-                    }
-
-                    renderedSomething = true;
-                    return (
-                      <div
-                        key={idx}
-                        className={cn(
-                          "prose prose-sm max-w-none leading-relaxed text-foreground",
-                          (theme === 'dark' || theme === 'gray') ? "prose-invert" : ""
-                        )}
-                        style={{ color: 'var(--color-foreground)' }}
-                      >
-                        <ReactMarkdown
-                          // remarkPlugins removed for Safari compatibility
-                          components={{
-                            code({ node, inline, className, children, ...props }: any) {
-                              const match = /language-(\w+)/.exec(className || '');
-                              return !inline && match ? (
-                                <SyntaxHighlighter
-                                  style={syntaxTheme}
-                                  language={match[1]}
-                                  PreTag="div"
-                                  className={cn(
-                                    "rounded-lg !mt-3 !mb-3 border border-border/40 transition-all",
-                                    (theme === 'dark' || theme === 'gray') ? "!bg-muted/30" : "!bg-muted/40"
-                                  )}
-                                  {...props}
-                                >
-                                  {String(children).replace(/\n$/, '')}
-                                </SyntaxHighlighter>
-                              ) : (
-                                <code className="bg-muted/40 px-1.5 py-0.5 rounded text-primary/90 font-mono text-[0.9em]" {...props}>
-                                  {children}
-                                </code>
-                              );
-                            }
-                          }}
-                        >
-                          {textContent}
-                        </ReactMarkdown>
-                      </div>
-                    );
-                  }
-
-                  // Thinking content - render with ThinkingWidget
-                  if (content.type === "thinking") {
-                    renderedSomething = true;
-                    return (
-                      <div key={idx} className="opacity-90">
-                        <ThinkingWidget
-                          thinking={content.thinking || ''}
-                          signature={content.signature}
-                        />
-                      </div>
-                    );
-                  }
-
-                  // Tool use - render custom widgets based on tool name
-                  if (content.type === "tool_use") {
-                    const toolName = content.name?.toLowerCase();
-                    const input = content.input;
-                    const toolId = content.id;
-
-                    // Get the tool result if available
-                    const toolResult = getToolResult(toolId);
-
-                    // Function to render the appropriate tool widget
-                    const renderToolWidget = () => {
-                      // Task tool - for sub-agent tasks
-                      if (toolName === "task" && input) {
-                        renderedSomething = true;
-                        return <TaskWidget description={input.description} prompt={input.prompt} result={toolResult} />;
-                      }
-
-                      // Edit tool
-                      if (toolName === "edit" && input?.file_path) {
-                        renderedSomething = true;
-                        return <EditWidget {...input} result={toolResult} />;
-                      }
-
-                      // MultiEdit tool
-                      if (toolName === "multiedit" && input?.file_path && input?.edits) {
-                        renderedSomething = true;
-                        return <MultiEditWidget {...input} result={toolResult} />;
-                      }
-
-                      // MCP tools (starting with mcp__)
-                      if (content.name?.startsWith("mcp__")) {
-                        renderedSomething = true;
-                        return <MCPWidget toolName={content.name} input={input} result={toolResult} />;
-                      }
-
-                      // TodoWrite tool
-                      if (toolName === "todowrite" && input?.todos) {
-                        renderedSomething = true;
-                        return <TodoWidget todos={input.todos} result={toolResult} />;
-                      }
-
-                      // TodoRead tool
-                      if (toolName === "todoread") {
-                        renderedSomething = true;
-                        return <TodoReadWidget todos={input?.todos} result={toolResult} />;
-                      }
-
-                      // LS tool
-                      if (toolName === "ls" && input?.path) {
-                        renderedSomething = true;
-                        return <LSWidget path={input.path} result={toolResult} />;
-                      }
-
-                      // Read tool
-                      if (toolName === "read" && input?.file_path) {
-                        renderedSomething = true;
-                        return <ReadWidget filePath={input.file_path} result={toolResult} />;
-                      }
-
-                      // Glob tool
-                      if (toolName === "glob" && input?.pattern) {
-                        renderedSomething = true;
-                        return <GlobWidget pattern={input.pattern} result={toolResult} />;
-                      }
-
-                      // Bash tool
-                      if (toolName === "bash" && input?.command) {
-                        renderedSomething = true;
-                        return <BashWidget command={input.command} description={input.description} result={toolResult} />;
-                      }
-
-                      // Write tool
-                      if (toolName === "write" && input?.file_path && input?.content) {
-                        renderedSomething = true;
-                        return <WriteWidget filePath={input.file_path} content={input.content} result={toolResult} />;
-                      }
-
-                      // Grep tool
-                      if (toolName === "grep" && input?.pattern) {
-                        renderedSomething = true;
-                        return <GrepWidget pattern={input.pattern} include={input.include} path={input.path} exclude={input.exclude} result={toolResult} />;
-                      }
-
-                      // WebSearch tool
-                      if (toolName === "websearch" && input?.query) {
-                        renderedSomething = true;
-                        return <WebSearchWidget query={input.query} result={toolResult} />;
-                      }
-
-                      // WebFetch tool
-                      if (toolName === "webfetch" && input?.url) {
-                        renderedSomething = true;
-                        return <WebFetchWidget url={input.url} prompt={input.prompt} result={toolResult} />;
-                      }
-
-                      // Skill tool
-                      if (toolName === "skill") {
-                        renderedSomething = true;
-                        // Handle both input structures: explicit args or flat properties
-                        const skillName = input?.name || "Unknown Skill";
-                        const skillInput = input?.input || input?.args || input;
-                        return <SkillWidget name={skillName} input={skillInput} result={toolResult} />;
-                      }
-
-                      // LSP tool
-                      if (toolName === "lsp") {
-                        renderedSomething = true;
-                        const lspCommand = input?.command || "Unknown Command";
-                        const lspArgs = input?.args || input?.arguments || input;
-                        return <LSPWidget command={lspCommand} args={lspArgs} result={toolResult} />;
-                      }
-
-                      // Default - return null
-                      return null;
-                    };
-
-                    // Render the tool widget
-                    const widget = renderToolWidget();
-                    if (widget) {
-                      renderedSomething = true;
-                      return <div key={idx} className="my-3">{widget}</div>;
-                    }
-
-                    // Fallback to basic tool display
-                    renderedSomething = true;
-                    return (
-                      <div key={idx} className="space-y-2 my-2">
-                        <div className="flex items-center gap-2">
-                          <Terminal className="h-4 w-4 text-muted-foreground" />
-                          <span className="text-sm font-medium">
-                            Using tool: <code className="font-mono text-primary">{content.name}</code>
-                          </span>
-                        </div>
-                        {content.input && (
-                          <div className="ml-6 p-2 bg-muted/30 rounded-md border border-border/50">
-                            <pre className="text-xs font-mono overflow-x-auto text-muted-foreground">
-                              {JSON.stringify(content.input, null, 2)}
-                            </pre>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  }
-
-                  return null;
-                })}
-
-                {msg.usage && (
-                  <div className="text-[10px] text-muted-foreground/60 mt-3 pt-2 border-t border-border/30 flex justify-end">
-                    {msg.usage.input_tokens} in · {msg.usage.output_tokens} out
-                  </div>
-                )}
-
-                {/* Result Data Footer */}
-                {message.resultData && (
-                  <div className="mt-4 pt-3 border-t border-border/40 text-xs text-muted-foreground space-y-1.5 bg-muted/10 -mx-5 -mb-5 p-4 rounded-b-lg">
-                    <div className="flex items-center gap-1.5 font-medium mb-1 text-green-600 dark:text-green-500">
-                      <CheckCircle2 className="h-3.5 w-3.5" />
-                      Execution Complete
-                    </div>
-                    <div className="grid grid-cols-2 gap-x-8 gap-y-1 opacity-80">
-                      {(message.resultData.cost_usd !== undefined || message.resultData.total_cost_usd !== undefined) && (
-                        <div>Cost: <span className="font-mono text-foreground/80">${((message.resultData.cost_usd || message.resultData.total_cost_usd)!).toFixed(4)} USD</span></div>
-                      )}
-                      {message.resultData.duration_ms !== undefined && (
-                        <div>Duration: <span className="font-mono text-foreground/80">{(message.resultData.duration_ms / 1000).toFixed(2)}s</span></div>
-                      )}
-                      {message.resultData.num_turns !== undefined && (
-                        <div>Turns: <span className="font-mono text-foreground/80">{message.resultData.num_turns}</span></div>
-                      )}
-                    </div>
-                  </div>
-                )}
+          <div className="flex items-start gap-5">
+            <div className="flex flex-col items-center gap-2 pt-1 shrink-0">
+              <div className="relative p-2 rounded-xl bg-primary/5 text-primary border border-primary/20 shadow-glow">
+                <Bot className="h-4.5 w-4.5" />
+                <div className="absolute inset-0 rounded-xl bg-primary/10 animate-pulse -z-10" />
               </div>
             </div>
-          </CardContent>
-        </Card>
+
+            <div className="flex-1 space-y-4 min-w-0">
+              {msg.content && Array.isArray(msg.content) && msg.content.map((content: any, idx: number) => {
+                // Text content - render as markdown
+                if (content.type === "text") {
+                  // Ensure we have a string to render
+                  let textContent = typeof content.text === 'string'
+                    ? content.text
+                    : (content.text?.text || JSON.stringify(content.text || content));
+
+                  // Filter out CLI warning/debug messages that shouldn't be shown
+                  const warningPatterns = [
+                    'Pre-flight check is taking longer than expected',
+                    'ANTHROPIC_LOG=debug',
+                    '[BashTool]',
+                    'Run with ANTHROPIC_LOG',
+                  ];
+
+                  if (warningPatterns.some(pattern => textContent.includes(pattern))) {
+                    return null; // Skip this warning message
+                  }
+
+                  // Skip empty or whitespace-only content
+                  if (!textContent.trim()) {
+                    return null;
+                  }
+
+                  renderedSomething = true;
+                  return (
+                    <div
+                      key={idx}
+                      className={cn(
+                        "prose prose-sm max-w-none leading-[1.8] text-foreground font-normal tracking-wide",
+                        (theme === 'dark' || theme === 'gray') ? "prose-invert" : ""
+                      )}
+                      style={{ color: 'var(--color-foreground)' }}
+                    >
+                      <ReactMarkdown
+                        // remarkPlugins removed for Safari compatibility
+                        components={{
+                          p: ({ children }) => <p className="mb-4 last:mb-0 opacity-95">{children}</p>,
+                          code({ node, inline, className, children, ...props }: any) {
+                            const match = /language-(\w+)/.exec(className || '');
+                            return !inline && match ? (
+                              <SyntaxHighlighter
+                                style={syntaxTheme}
+                                language={match[1]}
+                                PreTag="div"
+                                className={cn(
+                                  "rounded-xl !mt-4 !mb-4 border border-border/30 transition-all shadow-sm overflow-hidden",
+                                  (theme === 'dark' || theme === 'gray') ? "!bg-muted/20" : "!bg-muted/40"
+                                )}
+                                {...props}
+                              >
+                                {String(children).replace(/\n$/, '')}
+                              </SyntaxHighlighter>
+                            ) : (
+                              <code className="bg-primary/10 px-1.5 py-0.5 rounded-md text-primary font-mono text-[0.85em] font-medium border border-primary/10" {...props}>
+                                {children}
+                              </code>
+                            );
+                          }
+                        }}
+                      >
+                        {textContent}
+                      </ReactMarkdown>
+                    </div>
+                  );
+                }
+
+                // Thinking content - render with ThinkingWidget
+                if (content.type === "thinking") {
+                  renderedSomething = true;
+                  return (
+                    <div key={idx} className="opacity-90">
+                      <ThinkingWidget
+                        thinking={content.thinking || ''}
+                        signature={content.signature}
+                      />
+                    </div>
+                  );
+                }
+
+                // Tool use - render custom widgets based on tool name
+                if (content.type === "tool_use") {
+                  const toolName = content.name?.toLowerCase();
+                  const input = content.input;
+                  const toolId = content.id;
+
+                  // Get the tool result if available
+                  const toolResult = getToolResult(toolId);
+
+                  // Function to render the appropriate tool widget
+                  const renderToolWidget = () => {
+                    // Task tool - for sub-agent tasks
+                    if (toolName === "task" && input) {
+                      renderedSomething = true;
+                      return <TaskWidget description={input.description} prompt={input.prompt} result={toolResult} />;
+                    }
+
+                    // Edit tool
+                    if (toolName === "edit" && input?.file_path) {
+                      renderedSomething = true;
+                      return <EditWidget {...input} result={toolResult} />;
+                    }
+
+                    // MultiEdit tool
+                    if (toolName === "multiedit" && input?.file_path && input?.edits) {
+                      renderedSomething = true;
+                      return <MultiEditWidget {...input} result={toolResult} />;
+                    }
+
+                    // MCP tools (starting with mcp__)
+                    if (content.name?.startsWith("mcp__")) {
+                      renderedSomething = true;
+                      return <MCPWidget toolName={content.name} input={input} result={toolResult} />;
+                    }
+
+                    // TodoWrite tool
+                    if (toolName === "todowrite" && input?.todos) {
+                      renderedSomething = true;
+                      return <TodoWidget todos={input.todos} result={toolResult} />;
+                    }
+
+                    // TodoRead tool
+                    if (toolName === "todoread") {
+                      renderedSomething = true;
+                      return <TodoReadWidget todos={input?.todos} result={toolResult} />;
+                    }
+
+                    // LS tool
+                    if (toolName === "ls" && input?.path) {
+                      renderedSomething = true;
+                      return <LSWidget path={input.path} result={toolResult} />;
+                    }
+
+                    // Read tool
+                    if (toolName === "read" && input?.file_path) {
+                      renderedSomething = true;
+                      return <ReadWidget filePath={input.file_path} result={toolResult} />;
+                    }
+
+                    // Glob tool
+                    if (toolName === "glob" && input?.pattern) {
+                      renderedSomething = true;
+                      return <GlobWidget pattern={input.pattern} result={toolResult} />;
+                    }
+
+                    // Bash tool
+                    if (toolName === "bash" && input?.command) {
+                      renderedSomething = true;
+                      return <BashWidget command={input.command} description={input.description} result={toolResult} />;
+                    }
+
+                    // Write tool
+                    if (toolName === "write" && input?.file_path && input?.content) {
+                      renderedSomething = true;
+                      return <WriteWidget filePath={input.file_path} content={input.content} result={toolResult} />;
+                    }
+
+                    // Grep tool
+                    if (toolName === "grep" && input?.pattern) {
+                      renderedSomething = true;
+                      return <GrepWidget pattern={input.pattern} include={input.include} path={input.path} exclude={input.exclude} result={toolResult} />;
+                    }
+
+                    // WebSearch tool
+                    if (toolName === "websearch" && input?.query) {
+                      renderedSomething = true;
+                      return <WebSearchWidget query={input.query} result={toolResult} />;
+                    }
+
+                    // WebFetch tool
+                    if (toolName === "webfetch" && input?.url) {
+                      renderedSomething = true;
+                      return <WebFetchWidget url={input.url} prompt={input.prompt} result={toolResult} />;
+                    }
+
+                    // Skill tool
+                    if (toolName === "skill") {
+                      renderedSomething = true;
+                      // Handle both input structures: explicit args or flat properties
+                      const skillName = input?.name || "Unknown Skill";
+                      const skillInput = input?.input || input?.args || input;
+                      return <SkillWidget name={skillName} input={skillInput} result={toolResult} />;
+                    }
+
+                    // LSP tool
+                    if (toolName === "lsp") {
+                      renderedSomething = true;
+                      const lspCommand = input?.command || "Unknown Command";
+                      const lspArgs = input?.args || input?.arguments || input;
+                      return <LSPWidget command={lspCommand} args={lspArgs} result={toolResult} />;
+                    }
+
+                    // Default - return null
+                    return null;
+                  };
+
+                  // Render the tool widget
+                  const widget = renderToolWidget();
+                  if (widget) {
+                    renderedSomething = true;
+                    return <div key={idx} className="my-3">{widget}</div>;
+                  }
+
+                  // Fallback to basic tool display
+                  renderedSomething = true;
+                  return (
+                    <div key={idx} className="space-y-2 my-2">
+                      <div className="flex items-center gap-2">
+                        <Terminal className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm font-medium">
+                          Using tool: <code className="font-mono text-primary">{content.name}</code>
+                        </span>
+                      </div>
+                      {content.input && (
+                        <div className="ml-6 p-2 bg-muted/30 rounded-md border border-border/50">
+                          <pre className="text-xs font-mono overflow-x-auto text-muted-foreground">
+                            {JSON.stringify(content.input, null, 2)}
+                          </pre>
+                        </div>
+                      )}
+                    </div>
+                  );
+                }
+
+                return null;
+              })}
+
+              {msg.usage && (
+                <div className="text-[10px] text-muted-foreground/60 mt-3 pt-2 border-t border-border/30 flex justify-end">
+                  {msg.usage.input_tokens} in · {msg.usage.output_tokens} out
+                </div>
+              )}
+
+              {/* Result Data Footer */}
+              {message.resultData && (
+                <div className="mt-4 pt-3 border-t border-border/40 text-xs text-muted-foreground space-y-1.5 bg-muted/10 -mx-5 -mb-5 p-4 rounded-b-lg">
+                  <div className="flex items-center gap-1.5 font-medium mb-1 text-green-600 dark:text-green-500">
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    Execution Complete
+                  </div>
+                  <div className="grid grid-cols-2 gap-x-8 gap-y-1 opacity-80">
+                    {(message.resultData.cost_usd !== undefined || message.resultData.total_cost_usd !== undefined) && (
+                      <div>Cost: <span className="font-mono text-foreground/80">${((message.resultData.cost_usd || message.resultData.total_cost_usd)!).toFixed(4)} USD</span></div>
+                    )}
+                    {message.resultData.duration_ms !== undefined && (
+                      <div>Duration: <span className="font-mono text-foreground/80">{(message.resultData.duration_ms / 1000).toFixed(2)}s</span></div>
+                    )}
+                    {message.resultData.num_turns !== undefined && (
+                      <div>Turns: <span className="font-mono text-foreground/80">{message.resultData.num_turns}</span></div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       );
 
       if (!renderedSomething) return null;
@@ -429,253 +438,256 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
       let renderedSomething = false;
 
       const renderedCard = (
-        <Card className={cn("border-transparent bg-muted/30 hover:bg-muted/40 transition-colors", className)}>
-          <CardContent className="p-4">
-            <div className="flex items-start gap-4">
-              <div className="p-1.5 rounded-lg bg-secondary text-secondary-foreground shrink-0 mt-0.5">
-                <User className="h-5 w-5" />
+        <div className={cn(
+          "group relative py-4 px-2 hover:bg-muted/10 transition-all duration-300 rounded-2xl animate-in fade-in slide-in-from-bottom-2",
+          className
+        )}>
+          <div className="flex items-start gap-5">
+            <div className="flex flex-col items-center pt-1 shrink-0">
+              <div className="p-1.5 rounded-lg bg-secondary/80 text-secondary-foreground shadow-sm">
+                <User className="h-4 w-4" />
               </div>
-              <div className="flex-1 space-y-2 min-w-0 pt-1">
-                {/* Handle content that is a simple string (e.g. from user commands) */}
-                {(typeof msg.content === 'string' || (msg.content && !Array.isArray(msg.content))) && (
-                  (() => {
-                    const contentStr = typeof msg.content === 'string' ? msg.content : String(msg.content);
-                    if (contentStr.trim() === '') return null;
-                    renderedSomething = true;
+            </div>
+            <div className="flex-1 space-y-2 min-w-0 pt-0.5">
+              {/* Handle content that is a simple string (e.g. from user commands) */}
+              {(typeof msg.content === 'string' || (msg.content && !Array.isArray(msg.content))) && (
+                (() => {
+                  const contentStr = typeof msg.content === 'string' ? msg.content : String(msg.content);
+                  if (contentStr.trim() === '') return null;
+                  renderedSomething = true;
 
-                    // Check if it's a command message
-                    const commandMatch = contentStr.match(/<command-name>(.+?)<\/command-name>[\s\S]*?<command-message>(.+?)<\/command-message>[\s\S]*?<command-args>(.*?)<\/command-args>/);
-                    if (commandMatch) {
-                      const [, commandName, commandMessage, commandArgs] = commandMatch;
-                      return (
-                        <CommandWidget
-                          commandName={commandName.trim()}
-                          commandMessage={commandMessage.trim()}
-                          commandArgs={commandArgs?.trim()}
-                        />
-                      );
-                    }
-
-                    // Check if it's command output
-                    const stdoutMatch = contentStr.match(/<local-command-stdout>([\s\S]*?)<\/local-command-stdout>/);
-                    if (stdoutMatch) {
-                      const [, output] = stdoutMatch;
-                      return <CommandOutputWidget output={output} onLinkDetected={onLinkDetected} />;
-                    }
-
-                    // Otherwise render as plain text
+                  // Check if it's a command message
+                  const commandMatch = contentStr.match(/<command-name>(.+?)<\/command-name>[\s\S]*?<command-message>(.+?)<\/command-message>[\s\S]*?<command-args>(.*?)<\/command-args>/);
+                  if (commandMatch) {
+                    const [, commandName, commandMessage, commandArgs] = commandMatch;
                     return (
-                      <div className="text-sm/relaxed text-foreground/90 whitespace-pre-wrap">
-                        {contentStr}
-                      </div>
+                      <CommandWidget
+                        commandName={commandName.trim()}
+                        commandMessage={commandMessage.trim()}
+                        commandArgs={commandArgs?.trim()}
+                      />
                     );
-                  })()
-                )}
+                  }
 
-                {/* Handle content that is an array of parts */}
-                {Array.isArray(msg.content) && msg.content.map((content: any, idx: number) => {
-                  // Tool result (User role can contain tool results in some API versions/contexts)
-                  if (content.type === "tool_result") {
-                    // Extract content logic...
-                    let contentText = '';
-                    if (typeof content.content === 'string') {
-                      contentText = content.content;
-                    } else if (content.content && typeof content.content === 'object') {
-                      if (content.content.text) {
-                        contentText = content.content.text;
-                      } else if (Array.isArray(content.content)) {
-                        contentText = content.content
-                          .map((c: any) => (typeof c === 'string' ? c : c.text || JSON.stringify(c)))
-                          .join('\n');
-                      } else {
-                        contentText = JSON.stringify(content.content, null, 2);
-                      }
+                  // Check if it's command output
+                  const stdoutMatch = contentStr.match(/<local-command-stdout>([\s\S]*?)<\/local-command-stdout>/);
+                  if (stdoutMatch) {
+                    const [, output] = stdoutMatch;
+                    return <CommandOutputWidget output={output} onLinkDetected={onLinkDetected} />;
+                  }
+
+                  // Otherwise render as plain text
+                  return (
+                    <div className="text-sm/relaxed text-foreground/90 whitespace-pre-wrap">
+                      {contentStr}
+                    </div>
+                  );
+                })()
+              )}
+
+              {/* Handle content that is an array of parts */}
+              {Array.isArray(msg.content) && msg.content.map((content: any, idx: number) => {
+                // Tool result (User role can contain tool results in some API versions/contexts)
+                if (content.type === "tool_result") {
+                  // Extract content logic...
+                  let contentText = '';
+                  if (typeof content.content === 'string') {
+                    contentText = content.content;
+                  } else if (content.content && typeof content.content === 'object') {
+                    if (content.content.text) {
+                      contentText = content.content.text;
+                    } else if (Array.isArray(content.content)) {
+                      contentText = content.content
+                        .map((c: any) => (typeof c === 'string' ? c : c.text || JSON.stringify(c)))
+                        .join('\n');
+                    } else {
+                      contentText = JSON.stringify(content.content, null, 2);
                     }
+                  }
 
-                    // Always show system reminders regardless of widget status
-                    const reminderMatch = contentText.match(/<system-reminder>(.*?)<\/system-reminder>/s);
-                    if (reminderMatch) {
-                      const reminderMessage = reminderMatch[1].trim();
-                      const beforeReminder = contentText.substring(0, reminderMatch.index || 0).trim();
-                      const afterReminder = contentText.substring((reminderMatch.index || 0) + reminderMatch[0].length).trim();
+                  // Always show system reminders regardless of widget status
+                  const reminderMatch = contentText.match(/<system-reminder>(.*?)<\/system-reminder>/s);
+                  if (reminderMatch) {
+                    const reminderMessage = reminderMatch[1].trim();
+                    const beforeReminder = contentText.substring(0, reminderMatch.index || 0).trim();
+                    const afterReminder = contentText.substring((reminderMatch.index || 0) + reminderMatch[0].length).trim();
 
-                      renderedSomething = true;
-                      return (
-                        <div key={idx} className="space-y-2 my-2">
-                          <div className="flex items-center gap-2">
-                            <CheckCircle2 className="h-4 w-4 text-green-500" />
-                            <span className="text-sm font-medium">Tool Result</span>
-                          </div>
-
-                          {beforeReminder && (
-                            <div className="ml-6 p-2 bg-muted/30 rounded-md border border-border/40">
-                              <pre className="text-xs font-mono overflow-x-auto whitespace-pre-wrap text-muted-foreground">
-                                {beforeReminder}
-                              </pre>
-                            </div>
-                          )}
-
-                          <div className="ml-6">
-                            <SystemReminderWidget message={reminderMessage} />
-                          </div>
-
-                          {afterReminder && (
-                            <div className="ml-6 p-2 bg-muted/30 rounded-md border border-border/40">
-                              <pre className="text-xs font-mono overflow-x-auto whitespace-pre-wrap text-muted-foreground">
-                                {afterReminder}
-                              </pre>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    }
-
-                    // Check if this is an Edit tool result
-                    const isEditResult = contentText.includes("has been updated. Here's the result of running `cat -n`");
-
-                    if (isEditResult) {
-                      renderedSomething = true;
-                      return (
-                        <div key={idx} className="space-y-2 my-2">
-                          <div className="flex items-center gap-2">
-                            <CheckCircle2 className="h-4 w-4 text-green-500" />
-                            <span className="text-sm font-medium">Edit Result</span>
-                          </div>
-                          <EditResultWidget content={contentText} />
-                        </div>
-                      );
-                    }
-
-                    // Check if this is a MultiEdit tool result
-                    const isMultiEditResult = contentText.includes("has been updated with multiple edits") ||
-                      contentText.includes("MultiEdit completed successfully") ||
-                      contentText.includes("Applied multiple edits to");
-
-                    if (isMultiEditResult) {
-                      renderedSomething = true;
-                      return (
-                        <div key={idx} className="space-y-2 my-2">
-                          <div className="flex items-center gap-2">
-                            <CheckCircle2 className="h-4 w-4 text-green-500" />
-                            <span className="text-sm font-medium">MultiEdit Result</span>
-                          </div>
-                          <MultiEditResultWidget content={contentText} />
-                        </div>
-                      );
-                    }
-
-                    // Check if this is an LS tool result (directory tree structure)
-                    const isLSResult = (() => {
-                      if (!content.tool_use_id || typeof contentText !== 'string') return false;
-
-                      // Check if this result came from an LS tool by looking for the tool call
-                      let isFromLSTool = false;
-
-                      // Search in previous assistant messages for the matching tool_use
-                      if (streamMessages) {
-                        for (let i = streamMessages.length - 1; i >= 0; i--) {
-                          const prevMsg = streamMessages[i];
-                          // Only check assistant messages
-                          if (prevMsg.type === 'assistant' && prevMsg.message?.content && Array.isArray(prevMsg.message.content)) {
-                            const toolUse = prevMsg.message.content.find((c: any) =>
-                              c.type === 'tool_use' &&
-                              c.id === content.tool_use_id &&
-                              c.name?.toLowerCase() === 'ls'
-                            );
-                            if (toolUse) {
-                              isFromLSTool = true;
-                              break;
-                            }
-                          }
-                        }
-                      }
-
-                      // Only proceed if this is from an LS tool
-                      if (!isFromLSTool) return false;
-
-                      // Additional validation: check for tree structure pattern
-                      const lines = contentText.split('\n');
-                      const hasTreeStructure = lines.some(line => /^\s*-\s+/.test(line));
-                      const hasNoteAtEnd = lines.some(line => line.trim().startsWith('NOTE: do any of the files'));
-
-                      return hasTreeStructure || hasNoteAtEnd;
-                    })();
-
-                    if (isLSResult) {
-                      renderedSomething = true;
-                      return (
-                        <div key={idx} className="space-y-2 my-2">
-                          <div className="flex items-center gap-2">
-                            <CheckCircle2 className="h-4 w-4 text-green-500" />
-                            <span className="text-sm font-medium">Directory Contents</span>
-                          </div>
-                          <LSResultWidget content={contentText} />
-                        </div>
-                      );
-                    }
-
-                    // Check if this is a Read tool result (contains line numbers with arrow separator)
-                    const isReadResult = content.tool_use_id && typeof contentText === 'string' &&
-                      /^\s*\d+→/.test(contentText);
-
-                    if (isReadResult) {
-                      // Try to find the corresponding Read tool call to get the file path
-                      let filePath: string | undefined;
-
-                      // Search in previous assistant messages for the matching tool_use
-                      if (streamMessages) {
-                        for (let i = streamMessages.length - 1; i >= 0; i--) {
-                          const prevMsg = streamMessages[i];
-                          // Only check assistant messages
-                          if (prevMsg.type === 'assistant' && prevMsg.message?.content && Array.isArray(prevMsg.message.content)) {
-                            const toolUse = prevMsg.message.content.find((c: any) =>
-                              c.type === 'tool_use' &&
-                              c.id === content.tool_use_id &&
-                              c.name?.toLowerCase() === 'read'
-                            );
-                            if (toolUse?.input?.file_path) {
-                              filePath = toolUse.input.file_path;
-                              break;
-                            }
-                          }
-                        }
-                      }
-
-                      renderedSomething = true;
-                      return (
-                        <div key={idx} className="space-y-2 my-2">
-                          <div className="flex items-center gap-2">
-                            <CheckCircle2 className="h-4 w-4 text-green-500" />
-                            <span className="text-sm font-medium">Read Result</span>
-                          </div>
-                          <ReadResultWidget content={contentText} filePath={filePath} />
-                        </div>
-                      );
-                    }
-
-                    // Render simple tool result
                     renderedSomething = true;
                     return (
-                      <div key={idx} className="space-y-2 my-2 opacity-80">
+                      <div key={idx} className="space-y-2 my-2">
                         <div className="flex items-center gap-2">
                           <CheckCircle2 className="h-4 w-4 text-green-500" />
-                          <span className="text-sm font-medium">Tool Output</span>
+                          <span className="text-sm font-medium">Tool Result</span>
                         </div>
-                        <div className="ml-6 p-2 bg-muted/30 rounded border border-border/30">
-                          <pre className="text-xs font-mono overflow-x-auto whitespace-pre-wrap text-muted-foreground">
-                            {contentText}
-                          </pre>
+
+                        {beforeReminder && (
+                          <div className="ml-6 p-2 bg-muted/30 rounded-md border border-border/40">
+                            <pre className="text-xs font-mono overflow-x-auto whitespace-pre-wrap text-muted-foreground">
+                              {beforeReminder}
+                            </pre>
+                          </div>
+                        )}
+
+                        <div className="ml-6">
+                          <SystemReminderWidget message={reminderMessage} />
                         </div>
+
+                        {afterReminder && (
+                          <div className="ml-6 p-2 bg-muted/30 rounded-md border border-border/40">
+                            <pre className="text-xs font-mono overflow-x-auto whitespace-pre-wrap text-muted-foreground">
+                              {afterReminder}
+                            </pre>
+                          </div>
+                        )}
                       </div>
                     );
                   }
 
-                  return null;
-                })}
-              </div>
+                  // Check if this is an Edit tool result
+                  const isEditResult = contentText.includes("has been updated. Here's the result of running `cat -n`");
+
+                  if (isEditResult) {
+                    renderedSomething = true;
+                    return (
+                      <div key={idx} className="space-y-2 my-2">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                          <span className="text-sm font-medium">Edit Result</span>
+                        </div>
+                        <EditResultWidget content={contentText} />
+                      </div>
+                    );
+                  }
+
+                  // Check if this is a MultiEdit tool result
+                  const isMultiEditResult = contentText.includes("has been updated with multiple edits") ||
+                    contentText.includes("MultiEdit completed successfully") ||
+                    contentText.includes("Applied multiple edits to");
+
+                  if (isMultiEditResult) {
+                    renderedSomething = true;
+                    return (
+                      <div key={idx} className="space-y-2 my-2">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                          <span className="text-sm font-medium">MultiEdit Result</span>
+                        </div>
+                        <MultiEditResultWidget content={contentText} />
+                      </div>
+                    );
+                  }
+
+                  // Check if this is an LS tool result (directory tree structure)
+                  const isLSResult = (() => {
+                    if (!content.tool_use_id || typeof contentText !== 'string') return false;
+
+                    // Check if this result came from an LS tool by looking for the tool call
+                    let isFromLSTool = false;
+
+                    // Search in previous assistant messages for the matching tool_use
+                    if (streamMessages) {
+                      for (let i = streamMessages.length - 1; i >= 0; i--) {
+                        const prevMsg = streamMessages[i];
+                        // Only check assistant messages
+                        if (prevMsg.type === 'assistant' && prevMsg.message?.content && Array.isArray(prevMsg.message.content)) {
+                          const toolUse = prevMsg.message.content.find((c: any) =>
+                            c.type === 'tool_use' &&
+                            c.id === content.tool_use_id &&
+                            c.name?.toLowerCase() === 'ls'
+                          );
+                          if (toolUse) {
+                            isFromLSTool = true;
+                            break;
+                          }
+                        }
+                      }
+                    }
+
+                    // Only proceed if this is from an LS tool
+                    if (!isFromLSTool) return false;
+
+                    // Additional validation: check for tree structure pattern
+                    const lines = contentText.split('\n');
+                    const hasTreeStructure = lines.some(line => /^\s*-\s+/.test(line));
+                    const hasNoteAtEnd = lines.some(line => line.trim().startsWith('NOTE: do any of the files'));
+
+                    return hasTreeStructure || hasNoteAtEnd;
+                  })();
+
+                  if (isLSResult) {
+                    renderedSomething = true;
+                    return (
+                      <div key={idx} className="space-y-2 my-2">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                          <span className="text-sm font-medium">Directory Contents</span>
+                        </div>
+                        <LSResultWidget content={contentText} />
+                      </div>
+                    );
+                  }
+
+                  // Check if this is a Read tool result (contains line numbers with arrow separator)
+                  const isReadResult = content.tool_use_id && typeof contentText === 'string' &&
+                    /^\s*\d+→/.test(contentText);
+
+                  if (isReadResult) {
+                    // Try to find the corresponding Read tool call to get the file path
+                    let filePath: string | undefined;
+
+                    // Search in previous assistant messages for the matching tool_use
+                    if (streamMessages) {
+                      for (let i = streamMessages.length - 1; i >= 0; i--) {
+                        const prevMsg = streamMessages[i];
+                        // Only check assistant messages
+                        if (prevMsg.type === 'assistant' && prevMsg.message?.content && Array.isArray(prevMsg.message.content)) {
+                          const toolUse = prevMsg.message.content.find((c: any) =>
+                            c.type === 'tool_use' &&
+                            c.id === content.tool_use_id &&
+                            c.name?.toLowerCase() === 'read'
+                          );
+                          if (toolUse?.input?.file_path) {
+                            filePath = toolUse.input.file_path;
+                            break;
+                          }
+                        }
+                      }
+                    }
+
+                    renderedSomething = true;
+                    return (
+                      <div key={idx} className="space-y-2 my-2">
+                        <div className="flex items-center gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                          <span className="text-sm font-medium">Read Result</span>
+                        </div>
+                        <ReadResultWidget content={contentText} filePath={filePath} />
+                      </div>
+                    );
+                  }
+
+                  // Render simple tool result
+                  renderedSomething = true;
+                  return (
+                    <div key={idx} className="space-y-2 my-2 opacity-80">
+                      <div className="flex items-center gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-green-500" />
+                        <span className="text-sm font-medium">Tool Output</span>
+                      </div>
+                      <div className="ml-6 p-2 bg-muted/30 rounded border border-border/30">
+                        <pre className="text-xs font-mono overflow-x-auto whitespace-pre-wrap text-muted-foreground">
+                          {contentText}
+                        </pre>
+                      </div>
+                    </div>
+                  );
+                }
+
+                return null;
+              })}
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       );
       if (!renderedSomething) return null;
       return renderedCard;

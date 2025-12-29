@@ -1040,8 +1040,10 @@ const FloatingPromptInputInner = (
                               size="sm"
                               disabled={disabled}
                               className={cn(
-                                "h-9 w-9 p-0 rounded-xl flex items-center justify-center border shadow-sm transition-all",
-                                modelPickerOpen ? "border-primary/30" : "bg-card/50"
+                                "h-9 w-9 p-0 rounded-xl flex items-center justify-center border transition-all duration-200",
+                                modelPickerOpen
+                                  ? "border-primary/30 shadow-sm"
+                                  : "bg-transparent border-transparent hover:bg-muted/30 text-muted-foreground hover:text-foreground"
                               )}
                               style={{
                                 backgroundColor: modelPickerOpen
@@ -1115,8 +1117,10 @@ const FloatingPromptInputInner = (
                               size="sm"
                               disabled={disabled}
                               className={cn(
-                                "h-9 w-9 p-0 rounded-xl flex items-center justify-center border shadow-sm transition-all",
-                                thinkingModePickerOpen ? "border-primary/30" : "bg-card/50"
+                                "h-9 w-9 p-0 rounded-xl flex items-center justify-center border transition-all duration-200",
+                                thinkingModePickerOpen
+                                  ? "border-primary/30 shadow-sm"
+                                  : "bg-transparent border-transparent hover:bg-muted/30 text-muted-foreground hover:text-foreground"
                               )}
                               style={{
                                 backgroundColor: thinkingModePickerOpen
@@ -1220,7 +1224,7 @@ const FloatingPromptInputInner = (
                           size="icon"
                           onClick={() => setIsExpanded(true)}
                           disabled={disabled}
-                          className="h-9 w-9 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-xl"
+                          className="h-9 w-9 text-muted-foreground hover:text-foreground hover:bg-muted/30 rounded-xl bg-transparent border-none transition-all duration-200"
                         >
                           <Maximize2 className="h-4 w-4" />
                         </Button>

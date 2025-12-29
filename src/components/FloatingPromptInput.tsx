@@ -1095,10 +1095,13 @@ const FloatingPromptInputInner = (
         {/* Fixed Position Input Bar */}
         <div
           className={cn(
-            "fixed bottom-0 left-0 right-0 z-40 bg-card/80 backdrop-blur-md border-t border-border/40 shadow-2xl transition-all duration-300",
+            "fixed bottom-0 left-0 right-0 z-40 backdrop-blur-md border-t border-border/40 shadow-2xl transition-all duration-300",
             dragActive && "ring-2 ring-primary ring-offset-2 bg-card/95",
             className
           )}
+          style={{
+            backgroundColor: 'color-mix(in srgb, var(--color-card), transparent 20%)'
+          }}
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
           onDragOver={handleDrag}

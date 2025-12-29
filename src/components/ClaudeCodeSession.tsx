@@ -1621,7 +1621,10 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
                 transition={{ delay: 0.5 }}
                 className="fixed bottom-32 right-6 z-50"
               >
-                <div className="flex items-center bg-card/95 backdrop-blur-md border rounded-full shadow-lg overflow-hidden">
+                <div
+                  className="flex items-center backdrop-blur-md border rounded-full shadow-lg overflow-hidden"
+                  style={{ backgroundColor: 'var(--color-card)', opacity: 0.95 }}
+                >
                   <TooltipSimple content="Scroll to top" side="top">
                     <motion.div
                       whileTap={{ scale: 0.97 }}
@@ -1687,11 +1690,16 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
               </motion.div>
             )}
 
-            <div className={cn(
-              "fixed bottom-0 left-0 right-0 transition-all duration-300 z-50",
-              "bg-gradient-to-t from-card via-card/80 to-transparent pt-12",
-              showTimeline && "sm:right-96"
-            )}>
+            <div
+              className={cn(
+                "fixed bottom-0 left-0 right-0 transition-all duration-300 z-50",
+                "pt-12",
+                showTimeline && "sm:right-96"
+              )}
+              style={{
+                background: 'linear-gradient(to top, var(--color-card) 0%, color-mix(in srgb, var(--color-card), transparent 20%) 50%, transparent 100%)'
+              }}
+            >
               <FloatingPromptInput
                 ref={floatingPromptRef}
                 defaultModel="claude-sonnet-4-5-20250929"

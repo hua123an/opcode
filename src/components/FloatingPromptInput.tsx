@@ -4,15 +4,13 @@ import {
   Send,
   Maximize2,
   Minimize2,
-  ChevronUp,
   Sparkles,
   Zap,
   Square,
   Brain,
   Lightbulb,
   Cpu,
-  Rocket,
-
+  Rocket
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -1102,230 +1100,211 @@ const FloatingPromptInputInner = (
         </AnimatePresence>
 
         {/* Fixed Position Input Bar */}
+        {/* Fixed Position Input Bar */}
         <div
           className={cn(
-            isFixed ? "fixed bottom-0 left-0 right-0 z-40" : "relative w-full z-10",
-            "backdrop-blur-md border-t border-border/40 shadow-2xl transition-all duration-300",
-            dragActive && "ring-2 ring-primary ring-offset-2 bg-card/95",
+            isFixed ? "fixed bottom-0 left-0 right-0 z-40 pb-6" : "relative w-full z-10 py-4",
+            "transition-all duration-300",
+            dragActive && "scale-[1.01]",
             className
           )}
-          style={{
-            backgroundColor: 'color-mix(in srgb, var(--color-card), transparent 20%)'
-          }}
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
           onDrop={handleDrop}
         >
-          <div className="container mx-auto max-w-5xl">
+          <div className="container mx-auto max-w-6xl px-4">
             {/* Image previews */}
-            {(embeddedImages.length > 0 || attachments.length > 0) && (
-              <ImagePreview
-                images={[...embeddedImages, ...attachments.map(a => a.preview || a.path)]}
-                onRemove={handleRemoveImage}
-                className="border-b border-border/30 bg-muted/20"
-              />
-            )}
+            <AnimatePresence>
+              {(embeddedImages.length > 0 || attachments.length > 0) && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                  className="mb-2"
+                >
+                  <ImagePreview
+                    images={[...embeddedImages, ...attachments.map(a => a.preview || a.path)]}
+                    onRemove={handleRemoveImage}
+                    className="rounded-xl border border-border/40 bg-card/40 backdrop-blur-md shadow-lg overflow-hidden"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-            <div className="p-4">
-              <div className="flex items-end gap-3">
-                {/* Model & Thinking Mode Selectors - Left side, fixed at bottom */}
-                <div className="flex items-center gap-1 shrink-0 mb-1.5">
-                  <Popover
-                    trigger={
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <motion.div
-                            whileTap={{ scale: 0.97 }}
-                            transition={{ duration: 0.15 }}
-                          >
+            <div
+              className={cn(
+                "relative group rounded-2xl border border-border/50 shadow-2xl overflow-hidden transition-all duration-300",
+                "bg-card/40 backdrop-blur-xl"
+              )}
+            >
+              {/* Top border highlight for glass effect */}
+              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border/50 to-transparent opacity-50" />
+
+              <div className="flex flex-col">
+                {/* Input Area */}
+                <div className="flex items-start gap-2 p-3">
+                  {/* Model & Thinking Mode Selectors - Integrated into the top-left of the input box */}
+                  <div className="flex flex-col gap-1 shrink-0 pt-1">
+                    <Popover
+                      trigger={
+                        <TooltipSimple content="Select Model" side="top">
+                          <motion.div whileTap={{ scale: 0.97 }}>
                             <Button
                               variant="ghost"
                               size="sm"
                               disabled={disabled}
-                              className="h-8 px-2.5 hover:bg-muted/50 gap-1.5 text-xs font-medium rounded-full border border-transparent hover:border-border/40"
+                              className="h-8 w-8 p-0 hover:bg-muted/50 rounded-lg flex items-center justify-center border border-transparent hover:border-border/40"
                             >
-                              <span className={selectedModelMeta.color}>
+                              <span className={cn("text-base", selectedModelMeta.color)}>
                                 {selectedModelMeta.icon}
                               </span>
-                              <span className="opacity-80">
-                                {selectedModelMeta.shortName}
-                              </span>
-                              <ChevronUp className="h-3 w-3 opacity-40 ml-0.5" />
                             </Button>
                           </motion.div>
-                        </TooltipTrigger>
-                        <TooltipContent side="top">
-                          <p className="text-xs font-medium">{selectedModelData.display_name}</p>
-                          <p className="text-xs text-muted-foreground">{selectedModelData.id}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    }
-                    content={
-                      <div className="w-[300px] p-1.5 max-h-[300px] overflow-y-auto">
-                        {availableModels.map((model) => {
-                          const meta = getModelMetadata(model.id);
-                          return (
+                        </TooltipSimple>
+                      }
+                      content={
+                        <div className="w-[300px] p-1.5 max-h-[300px] overflow-y-auto">
+                          {availableModels.map((model) => {
+                            const meta = getModelMetadata(model.id);
+                            return (
+                              <button
+                                key={model.id}
+                                onClick={() => {
+                                  setSelectedModel(model.id);
+                                  setModelPickerOpen(false);
+                                }}
+                                className={cn(
+                                  "w-full flex items-start gap-3 p-3 rounded-lg transition-all text-left mb-1",
+                                  "hover:bg-accent hover:text-accent-foreground",
+                                  selectedModel === model.id ? "bg-accent/80 shadow-sm" : "text-muted-foreground hover:text-foreground"
+                                )}
+                              >
+                                <div className="mt-0.5">
+                                  <span className={meta.color}>
+                                    {meta.icon}
+                                  </span>
+                                </div>
+                                <div className="flex-1 space-y-1">
+                                  <div className="font-medium text-sm text-foreground">{model.display_name}</div>
+                                  <div className="text-xs opacity-70">
+                                    {model.id}
+                                  </div>
+                                </div>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      }
+                      open={modelPickerOpen}
+                      onOpenChange={setModelPickerOpen}
+                      align="start"
+                      side="top"
+                    />
+
+                    <Popover
+                      trigger={
+                        <TooltipSimple content={`Thinking: ${selectedThinkingMode}`} side="top">
+                          <motion.div whileTap={{ scale: 0.97 }}>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              disabled={disabled}
+                              className="h-8 w-8 p-0 hover:bg-muted/50 rounded-lg flex items-center justify-center border border-transparent hover:border-border/40"
+                            >
+                              <span className={cn("text-base", THINKING_MODES.find(m => m.id === selectedThinkingMode)?.color)}>
+                                {THINKING_MODES.find(m => m.id === selectedThinkingMode)?.icon}
+                              </span>
+                            </Button>
+                          </motion.div>
+                        </TooltipSimple>
+                      }
+                      content={
+                        <div className="w-[280px] p-1.5">
+                          {THINKING_MODES.map((mode) => (
                             <button
-                              key={model.id}
+                              key={mode.id}
                               onClick={() => {
-                                setSelectedModel(model.id);
-                                setModelPickerOpen(false);
+                                setSelectedThinkingMode(mode.id);
+                                setThinkingModePickerOpen(false);
                               }}
                               className={cn(
                                 "w-full flex items-start gap-3 p-3 rounded-lg transition-all text-left mb-1",
                                 "hover:bg-accent hover:text-accent-foreground",
-                                selectedModel === model.id ? "bg-accent/80 shadow-sm" : "text-muted-foreground hover:text-foreground"
+                                selectedThinkingMode === mode.id ? "bg-accent/80 shadow-sm" : "text-muted-foreground hover:text-foreground"
                               )}
                             >
-                              <div className="mt-0.5">
-                                <span className={meta.color}>
-                                  {meta.icon}
-                                </span>
-                              </div>
+                              <span className={cn("mt-0.5", mode.color)}>
+                                {mode.icon}
+                              </span>
                               <div className="flex-1 space-y-1">
-                                <div className="font-medium text-sm text-foreground">{model.display_name}</div>
+                                <div className="font-medium text-sm text-foreground">
+                                  {mode.name}
+                                </div>
                                 <div className="text-xs opacity-70">
-                                  {model.id}
+                                  {mode.description}
                                 </div>
                               </div>
+                              <ThinkingModeIndicator level={mode.level} />
                             </button>
-                          );
-                        })}
-                      </div>
-                    }
-                    open={modelPickerOpen}
-                    onOpenChange={setModelPickerOpen}
-                    align="start"
-                    side="top"
-                  />
+                          ))}
+                        </div>
+                      }
+                      open={thinkingModePickerOpen}
+                      onOpenChange={setThinkingModePickerOpen}
+                      align="start"
+                      side="top"
+                    />
+                  </div>
 
-                  <Popover
-                    trigger={
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <motion.div
-                            whileTap={{ scale: 0.97 }}
-                            transition={{ duration: 0.15 }}
-                          >
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              disabled={disabled}
-                              className="h-8 px-2.5 hover:bg-muted/50 gap-1.5 text-xs font-medium rounded-full border border-transparent hover:border-border/40"
-                            >
-                              <span className={THINKING_MODES.find(m => m.id === selectedThinkingMode)?.color}>
-                                {THINKING_MODES.find(m => m.id === selectedThinkingMode)?.icon}
-                              </span>
-                              <span className="opacity-80">
-                                {THINKING_MODES.find(m => m.id === selectedThinkingMode)?.shortName}
-                              </span>
-                              <ChevronUp className="h-3 w-3 opacity-40 ml-0.5" />
-                            </Button>
-                          </motion.div>
-                        </TooltipTrigger>
-                        <TooltipContent side="top">
-                          <p className="text-xs font-medium">Thinking: {THINKING_MODES.find(m => m.id === selectedThinkingMode)?.name || "Auto"}</p>
-                          <p className="text-xs text-muted-foreground">{THINKING_MODES.find(m => m.id === selectedThinkingMode)?.description}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    }
-                    content={
-                      <div className="w-[280px] p-1.5">
-                        {THINKING_MODES.map((mode) => (
-                          <button
-                            key={mode.id}
-                            onClick={() => {
-                              setSelectedThinkingMode(mode.id);
-                              setThinkingModePickerOpen(false);
-                            }}
-                            className={cn(
-                              "w-full flex items-start gap-3 p-3 rounded-lg transition-all text-left mb-1",
-                              "hover:bg-accent hover:text-accent-foreground",
-                              selectedThinkingMode === mode.id ? "bg-accent/80 shadow-sm" : "text-muted-foreground hover:text-foreground"
-                            )}
-                          >
-                            <span className={cn("mt-0.5", mode.color)}>
-                              {mode.icon}
-                            </span>
-                            <div className="flex-1 space-y-1">
-                              <div className="font-medium text-sm text-foreground">
-                                {mode.name}
-                              </div>
-                              <div className="text-xs opacity-70">
-                                {mode.description}
-                              </div>
-                            </div>
-                            <ThinkingModeIndicator level={mode.level} />
-                          </button>
-                        ))}
-                      </div>
-                    }
-                    open={thinkingModePickerOpen}
-                    onOpenChange={setThinkingModePickerOpen}
-                    align="start"
-                    side="top"
-                  />
+                  {/* Textarea Area */}
+                  <div className="flex-1 relative">
+                    <Textarea
+                      ref={textareaRef}
+                      value={prompt}
+                      onChange={handleTextChange}
+                      onKeyDown={handleKeyDown}
+                      onCompositionStart={handleCompositionStart}
+                      onCompositionEnd={handleCompositionEnd}
+                      onPaste={handlePaste}
+                      placeholder={
+                        dragActive
+                          ? "Drop images here..."
+                          : "Message Claude (@ for files, / for commands)..."
+                      }
+                      disabled={disabled}
+                      className={cn(
+                        "resize-none pl-1 pr-12 py-1.5 min-h-[40px] transition-all duration-200",
+                        "bg-transparent border-transparent shadow-none focus-visible:ring-0 md:text-sm text-base",
+                        "placeholder:text-muted-foreground/40",
+                        dragActive && "text-primary",
+                        textareaHeight >= 240 && "overflow-y-auto scrollbar-thin"
+                      )}
+                      style={{
+                        height: `${Math.max(textareaHeight - 20, 40)}px`,
+                        overflowY: textareaHeight >= 240 ? 'auto' : 'hidden'
+                      }}
+                    />
+                  </div>
 
-                </div>
-
-                {/* Prompt Input - Center */}
-                <div className="flex-1 relative group">
-                  <div
-                    className="absolute inset-0 rounded-xl -z-10 transition-colors group-hover:opacity-40"
-                    style={{ backgroundColor: 'var(--color-secondary)', opacity: 0.3 }}
-                  />
-                  <Textarea
-                    ref={textareaRef}
-                    value={prompt}
-                    onChange={handleTextChange}
-                    onKeyDown={handleKeyDown}
-                    onCompositionStart={handleCompositionStart}
-                    onCompositionEnd={handleCompositionEnd}
-                    onPaste={handlePaste}
-                    placeholder={
-                      dragActive
-                        ? "Drop images here..."
-                        : "Message Claude (@ for files, / for commands)..."
-                    }
-                    disabled={disabled}
-                    className={cn(
-                      "resize-none pr-24 pl-4 py-3 min-h-[50px] transition-all duration-200",
-                      "bg-transparent border-transparent shadow-none focus-visible:ring-0 md:text-sm text-base",
-                      "placeholder:text-muted-foreground/60",
-                      dragActive && "border-primary",
-                      textareaHeight >= 240 && "overflow-y-auto scrollbar-thin"
-                    )}
-                    style={{
-                      height: `${Math.max(textareaHeight, 52)}px`, // Slightly taller default
-                      overflowY: textareaHeight >= 240 ? 'auto' : 'hidden'
-                    }}
-                  />
-
-                  {/* Action buttons inside input - fixed at bottom right */}
-                  <div className="absolute right-2 bottom-2 flex items-center gap-1">
+                  {/* Right Actions */}
+                  <div className="flex items-center gap-1 shrink-0 pt-0.5">
                     <TooltipSimple content="Expand (Ctrl+Shift+E)" side="top">
-                      <motion.div
-                        whileTap={{ scale: 0.97 }}
-                        transition={{ duration: 0.15 }}
-                      >
+                      <motion.div whileTap={{ scale: 0.97 }}>
                         <Button
                           variant="ghost"
                           size="icon"
                           onClick={() => setIsExpanded(true)}
                           disabled={disabled}
-                          className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-background/50 rounded-lg transition-colors"
+                          className="h-8 w-8 text-muted-foreground/60 hover:text-foreground hover:bg-muted/50 rounded-lg"
                         >
                           <Maximize2 className="h-4 w-4" />
                         </Button>
                       </motion.div>
                     </TooltipSimple>
 
-                    <TooltipSimple content={isLoading ? "Stop generation" : "Send message (Enter)"} side="top">
-                      <motion.div
-                        whileTap={{ scale: 0.97 }}
-                        transition={{ duration: 0.15 }}
-                      >
+                    <TooltipSimple content={isLoading ? "Stop" : "Send (Enter)"} side="top">
+                      <motion.div whileTap={{ scale: 0.97 }}>
                         <Button
                           onClick={isLoading ? onCancel : handleSend}
                           disabled={isLoading ? false : (!prompt.trim() || disabled)}
@@ -1333,8 +1312,8 @@ const FloatingPromptInputInner = (
                           size="icon"
                           className={cn(
                             "h-8 w-8 transition-all duration-300 rounded-lg",
-                            prompt.trim() && !isLoading ? "shadow-md bg-primary text-primary-foreground hover:bg-primary/90" : "text-muted-foreground hover:bg-background/50",
-                            isLoading && "hover:bg-destructive/90 shadow-md"
+                            prompt.trim() && !isLoading ? "bg-primary text-primary-foreground shadow-md hover:shadow-lg" : "text-muted-foreground/40 hover:bg-muted/50",
+                            isLoading && "bg-destructive text-destructive-foreground"
                           )}
                         >
                           {isLoading ? (
@@ -1346,38 +1325,44 @@ const FloatingPromptInputInner = (
                       </motion.div>
                     </TooltipSimple>
                   </div>
-
-                  {/* File Picker */}
-                  <AnimatePresence>
-                    {showFilePicker && projectPath && projectPath.trim() && (
-                      <FilePicker
-                        basePath={projectPath.trim()}
-                        onSelect={handleFileSelect}
-                        onClose={handleFilePickerClose}
-                        initialQuery={filePickerQuery}
-                      />
-                    )}
-                  </AnimatePresence>
-
-                  {/* Slash Command Picker */}
-                  <AnimatePresence>
-                    {showSlashCommandPicker && (
-                      <SlashCommandPicker
-                        projectPath={projectPath}
-                        onSelect={handleSlashCommandSelect}
-                        onClose={handleSlashCommandPickerClose}
-                        initialQuery={slashCommandQuery}
-                      />
-                    )}
-                  </AnimatePresence>
                 </div>
 
-                {/* Extra menu items - Right side, fixed at bottom */}
-                {extraMenuItems && (
-                  <div className="flex items-center gap-0.5 shrink-0 mb-1">
+                {/* Bottom Toolbar - Only visible when extraMenuItems are present or model metadata needs to be shown */}
+                <div className="flex items-center justify-between px-3 pb-2 border-t border-border/10 bg-muted/5">
+                  <div className="flex items-center gap-3">
+                    <span className="text-[10px] font-medium text-muted-foreground/60 uppercase tracking-wider">
+                      {selectedModelMeta.shortName} • {selectedThinkingMode !== 'auto' ? `THINKING: ${selectedThinkingMode.replace('_', ' ')}` : 'THINKING: AUTO'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center gap-0.5">
                     {extraMenuItems}
                   </div>
-                )}
+                </div>
+
+                {/* File Picker */}
+                <AnimatePresence>
+                  {showFilePicker && projectPath && projectPath.trim() && (
+                    <FilePicker
+                      basePath={projectPath.trim()}
+                      onSelect={handleFileSelect}
+                      onClose={handleFilePickerClose}
+                      initialQuery={filePickerQuery}
+                    />
+                  )}
+                </AnimatePresence>
+
+                {/* Slash Command Picker */}
+                <AnimatePresence>
+                  {showSlashCommandPicker && (
+                    <SlashCommandPicker
+                      projectPath={projectPath}
+                      onSelect={handleSlashCommandSelect}
+                      onClose={handleSlashCommandPickerClose}
+                      initialQuery={slashCommandQuery}
+                    />
+                  )}
+                </AnimatePresence>
               </div>
             </div>
           </div>

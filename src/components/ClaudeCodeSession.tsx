@@ -1792,7 +1792,7 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.8 }}
-                      className="bg-background/95 backdrop-blur-md border rounded-full px-3 py-1 shadow-lg pointer-events-auto"
+                      className="bg-card/95 backdrop-blur-md border rounded-full px-3 py-1 shadow-lg pointer-events-auto"
                     >
                       <div className="flex items-center gap-1.5 text-xs">
                         <Hash className="h-3 w-3 text-muted-foreground" />

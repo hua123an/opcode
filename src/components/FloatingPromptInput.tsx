@@ -1030,7 +1030,7 @@ const FloatingPromptInputInner = (
                 {/* Input Area */}
                 <div className="flex items-start gap-3 p-4">
                   {/* Model & Thinking Mode Selectors */}
-                  <div className="flex flex-col gap-2 shrink-0 pt-1">
+                  <div className="flex items-center gap-2 shrink-0 pt-1">
                     <Popover
                       trigger={
                         <TooltipSimple content="Select Model" side="top">
@@ -1173,7 +1173,7 @@ const FloatingPromptInputInner = (
                   </div>
 
                   {/* Right Actions */}
-                  <div className="flex flex-col gap-2 shrink-0 pt-1">
+                  <div className="flex items-center gap-2 shrink-0 pt-1">
                     <TooltipSimple content="Expand" side="top">
                       <motion.div whileTap={{ scale: 0.95 }}>
                         <Button

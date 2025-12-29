@@ -182,10 +182,14 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
 
                     renderedSomething = true;
                     return (
-                      <div key={idx} className={cn(
-                        "prose prose-sm max-w-none leading-relaxed",
-                        (theme === 'dark' || theme === 'gray') ? "prose-invert" : ""
-                      )}>
+                      <div
+                        key={idx}
+                        className={cn(
+                          "prose prose-sm max-w-none leading-relaxed text-foreground",
+                          (theme === 'dark' || theme === 'gray') ? "prose-invert" : ""
+                        )}
+                        style={{ color: 'var(--color-foreground)' }}
+                      >
                         <ReactMarkdown
                           // remarkPlugins removed for Safari compatibility
                           components={{

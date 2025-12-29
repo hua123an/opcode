@@ -75,7 +75,7 @@ export const CustomTitlebar: React.FC<CustomTitlebarProps> = ({
   return (
     <TooltipProvider>
       <div
-        className="relative z-[200] h-11 bg-background/95 backdrop-blur-sm flex items-center justify-between select-none border-b border-border/50 tauri-drag"
+        className="relative z-[200] h-11 bg-card backdrop-blur-sm flex items-center justify-between select-none border-b border-border/50 tauri-drag"
         data-tauri-drag-region
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}

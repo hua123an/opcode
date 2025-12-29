@@ -175,7 +175,8 @@ html {
 /* Theme Variations */
 
 /* Dark Theme (Midnight Modern - Premium Default) */
-.theme-dark {
+/* Dark Theme (Midnight Modern - Premium Default) */
+html.theme-dark {
   /* Colors - Deep, rich backdrops with vibrant accents */
   --color-background: oklch(0.11 0.02 260);
   /* Deep cool navy/black */
@@ -215,7 +216,7 @@ html {
 }
 
 /* Light Theme (Clean & Airy) */
-.theme-light {
+html.theme-light {
   --color-background: oklch(0.99 0.005 260);
   --color-foreground: oklch(0.15 0.02 260);
   --color-card: oklch(1.0 0 0);

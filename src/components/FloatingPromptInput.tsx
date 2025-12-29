@@ -1095,8 +1095,8 @@ const FloatingPromptInputInner = (
         {/* Fixed Position Input Bar */}
         <div
           className={cn(
-            "fixed bottom-0 left-0 right-0 z-40 bg-background/80 backdrop-blur-md border-t border-border/40 shadow-2xl transition-all duration-300",
-            dragActive && "ring-2 ring-primary ring-offset-2 bg-background/95",
+            "fixed bottom-0 left-0 right-0 z-40 bg-card/80 backdrop-blur-md border-t border-border/40 shadow-2xl transition-all duration-300",
+            dragActive && "ring-2 ring-primary ring-offset-2 bg-card/95",
             className
           )}
           onDragEnter={handleDrag}
@@ -1258,7 +1258,7 @@ const FloatingPromptInputInner = (
 
                 {/* Prompt Input - Center */}
                 <div className="flex-1 relative group">
-                  <div className="absolute inset-0 bg-muted/30 rounded-xl -z-10 group-hover:bg-muted/40 transition-colors" />
+                  <div className="absolute inset-0 bg-secondary/30 rounded-xl -z-10 group-hover:bg-secondary/40 transition-colors" />
                   <Textarea
                     ref={textareaRef}
                     value={prompt}
@@ -1270,7 +1270,7 @@ const FloatingPromptInputInner = (
                     placeholder={
                       dragActive
                         ? "Drop images here..."
-                        : "Message Claude (Midnight Mode)..."
+                        : "Message Claude (@ for files, / for commands)..."
                     }
                     disabled={disabled}
                     className={cn(

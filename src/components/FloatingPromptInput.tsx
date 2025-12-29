@@ -1019,7 +1019,7 @@ const FloatingPromptInputInner = (
 
             <div
               className={cn(
-                "relative group rounded-2xl border border-border/80 shadow-2xl overflow-hidden transition-all duration-300",
+                "relative group rounded-2xl border border-border/80 shadow-2xl transition-all duration-300",
                 "backdrop-blur-xl"
               )}
               style={{
@@ -1213,7 +1213,7 @@ const FloatingPromptInputInner = (
 
                 {/* Bottom Toolbar */}
                 <div
-                  className="flex items-center justify-between px-4 py-2 border-t"
+                  className="flex items-center justify-between px-4 py-2 border-t rounded-b-2xl"
                   style={{ backgroundColor: 'color-mix(in srgb, var(--color-muted), transparent 90%)' }}
                 >
                   <div className="flex items-center gap-2">

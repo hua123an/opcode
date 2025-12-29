@@ -1060,19 +1060,30 @@ const FloatingPromptInputInner = (
                                   setModelPickerOpen(false);
                                 }}
                                 className={cn(
-                                  "w-full flex items-start gap-3 p-3 rounded-lg transition-all text-left mb-1",
+                                  "w-full flex items-start gap-3 p-3 rounded-lg transition-all text-left mb-1 group",
                                   "hover:bg-accent hover:text-accent-foreground",
-                                  selectedModel === model.id ? "bg-accent/80 shadow-sm" : "text-muted-foreground hover:text-foreground"
+                                  selectedModel === model.id ? "shadow-sm" : "text-muted-foreground hover:text-foreground"
                                 )}
+                                style={{
+                                  backgroundColor: selectedModel === model.id ? 'color-mix(in srgb, var(--color-primary), transparent 90%)' : undefined
+                                }}
                               >
                                 <div className="mt-0.5">
-                                  <span className={meta.color}>
+                                  <span className={cn(selectedModel === model.id ? "text-primary" : meta.color)}>
                                     {meta.icon}
                                   </span>
                                 </div>
                                 <div className="flex-1 space-y-1">
-                                  <div className="font-medium text-sm text-foreground">{model.display_name}</div>
-                                  <div className="text-xs opacity-70">
+                                  <div className={cn(
+                                    "font-medium text-sm transition-colors",
+                                    selectedModel === model.id ? "text-primary" : "text-foreground"
+                                  )}>
+                                    {model.display_name}
+                                  </div>
+                                  <div className={cn(
+                                    "text-xs transition-colors",
+                                    selectedModel === model.id ? "text-primary/70" : "opacity-70"
+                                  )}>
                                     {model.id}
                                   </div>
                                 </div>
@@ -1114,19 +1125,28 @@ const FloatingPromptInputInner = (
                                 setThinkingModePickerOpen(false);
                               }}
                               className={cn(
-                                "w-full flex items-start gap-3 p-3 rounded-lg transition-all text-left mb-1",
+                                "w-full flex items-start gap-3 p-3 rounded-lg transition-all text-left mb-1 group",
                                 "hover:bg-accent hover:text-accent-foreground",
-                                selectedThinkingMode === mode.id ? "bg-accent/80 shadow-sm" : "text-muted-foreground hover:text-foreground"
+                                selectedThinkingMode === mode.id ? "shadow-sm" : "text-muted-foreground hover:text-foreground"
                               )}
+                              style={{
+                                backgroundColor: selectedThinkingMode === mode.id ? 'color-mix(in srgb, var(--color-primary), transparent 90%)' : undefined
+                              }}
                             >
-                              <span className={cn("mt-0.5", mode.color)}>
+                              <span className={cn("mt-0.5", selectedThinkingMode === mode.id ? "text-primary" : mode.color)}>
                                 {mode.icon}
                               </span>
                               <div className="flex-1 space-y-1">
-                                <div className="font-medium text-sm text-foreground">
+                                <div className={cn(
+                                  "font-medium text-sm transition-colors",
+                                  selectedThinkingMode === mode.id ? "text-primary" : "text-foreground"
+                                )}>
                                   {mode.name}
                                 </div>
-                                <div className="text-xs opacity-70">
+                                <div className={cn(
+                                  "text-xs transition-colors",
+                                  selectedThinkingMode === mode.id ? "text-primary/70" : "opacity-70"
+                                )}>
                                   {mode.description}
                                 </div>
                               </div>

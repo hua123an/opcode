@@ -466,10 +466,6 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
                 {Array.isArray(msg.content) && msg.content.map((content: any, idx: number) => {
                   // Tool result (User role can contain tool results in some API versions/contexts)
                   if (content.type === "tool_result") {
-                    // Previous logic for filtering...
-
-                    // ... (keeping existing tool_result logic but simplifying wrapper style)
-
                     // Extract content logic...
                     let contentText = '';
                     if (typeof content.content === 'string') {
@@ -486,6 +482,167 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
                       }
                     }
 
+                    // Always show system reminders regardless of widget status
+                    const reminderMatch = contentText.match(/<system-reminder>(.*?)<\/system-reminder>/s);
+                    if (reminderMatch) {
+                      const reminderMessage = reminderMatch[1].trim();
+                      const beforeReminder = contentText.substring(0, reminderMatch.index || 0).trim();
+                      const afterReminder = contentText.substring((reminderMatch.index || 0) + reminderMatch[0].length).trim();
+
+                      renderedSomething = true;
+                      return (
+                        <div key={idx} className="space-y-2 my-2">
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 className="h-4 w-4 text-green-500" />
+                            <span className="text-sm font-medium">Tool Result</span>
+                          </div>
+
+                          {beforeReminder && (
+                            <div className="ml-6 p-2 bg-muted/30 rounded-md border border-border/40">
+                              <pre className="text-xs font-mono overflow-x-auto whitespace-pre-wrap text-muted-foreground">
+                                {beforeReminder}
+                              </pre>
+                            </div>
+                          )}
+
+                          <div className="ml-6">
+                            <SystemReminderWidget message={reminderMessage} />
+                          </div>
+
+                          {afterReminder && (
+                            <div className="ml-6 p-2 bg-muted/30 rounded-md border border-border/40">
+                              <pre className="text-xs font-mono overflow-x-auto whitespace-pre-wrap text-muted-foreground">
+                                {afterReminder}
+                              </pre>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    }
+
+                    // Check if this is an Edit tool result
+                    const isEditResult = contentText.includes("has been updated. Here's the result of running `cat -n`");
+
+                    if (isEditResult) {
+                      renderedSomething = true;
+                      return (
+                        <div key={idx} className="space-y-2 my-2">
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 className="h-4 w-4 text-green-500" />
+                            <span className="text-sm font-medium">Edit Result</span>
+                          </div>
+                          <EditResultWidget content={contentText} />
+                        </div>
+                      );
+                    }
+
+                    // Check if this is a MultiEdit tool result
+                    const isMultiEditResult = contentText.includes("has been updated with multiple edits") ||
+                      contentText.includes("MultiEdit completed successfully") ||
+                      contentText.includes("Applied multiple edits to");
+
+                    if (isMultiEditResult) {
+                      renderedSomething = true;
+                      return (
+                        <div key={idx} className="space-y-2 my-2">
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 className="h-4 w-4 text-green-500" />
+                            <span className="text-sm font-medium">MultiEdit Result</span>
+                          </div>
+                          <MultiEditResultWidget content={contentText} />
+                        </div>
+                      );
+                    }
+
+                    // Check if this is an LS tool result (directory tree structure)
+                    const isLSResult = (() => {
+                      if (!content.tool_use_id || typeof contentText !== 'string') return false;
+
+                      // Check if this result came from an LS tool by looking for the tool call
+                      let isFromLSTool = false;
+
+                      // Search in previous assistant messages for the matching tool_use
+                      if (streamMessages) {
+                        for (let i = streamMessages.length - 1; i >= 0; i--) {
+                          const prevMsg = streamMessages[i];
+                          // Only check assistant messages
+                          if (prevMsg.type === 'assistant' && prevMsg.message?.content && Array.isArray(prevMsg.message.content)) {
+                            const toolUse = prevMsg.message.content.find((c: any) =>
+                              c.type === 'tool_use' &&
+                              c.id === content.tool_use_id &&
+                              c.name?.toLowerCase() === 'ls'
+                            );
+                            if (toolUse) {
+                              isFromLSTool = true;
+                              break;
+                            }
+                          }
+                        }
+                      }
+
+                      // Only proceed if this is from an LS tool
+                      if (!isFromLSTool) return false;
+
+                      // Additional validation: check for tree structure pattern
+                      const lines = contentText.split('\n');
+                      const hasTreeStructure = lines.some(line => /^\s*-\s+/.test(line));
+                      const hasNoteAtEnd = lines.some(line => line.trim().startsWith('NOTE: do any of the files'));
+
+                      return hasTreeStructure || hasNoteAtEnd;
+                    })();
+
+                    if (isLSResult) {
+                      renderedSomething = true;
+                      return (
+                        <div key={idx} className="space-y-2 my-2">
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 className="h-4 w-4 text-green-500" />
+                            <span className="text-sm font-medium">Directory Contents</span>
+                          </div>
+                          <LSResultWidget content={contentText} />
+                        </div>
+                      );
+                    }
+
+                    // Check if this is a Read tool result (contains line numbers with arrow separator)
+                    const isReadResult = content.tool_use_id && typeof contentText === 'string' &&
+                      /^\s*\d+→/.test(contentText);
+
+                    if (isReadResult) {
+                      // Try to find the corresponding Read tool call to get the file path
+                      let filePath: string | undefined;
+
+                      // Search in previous assistant messages for the matching tool_use
+                      if (streamMessages) {
+                        for (let i = streamMessages.length - 1; i >= 0; i--) {
+                          const prevMsg = streamMessages[i];
+                          // Only check assistant messages
+                          if (prevMsg.type === 'assistant' && prevMsg.message?.content && Array.isArray(prevMsg.message.content)) {
+                            const toolUse = prevMsg.message.content.find((c: any) =>
+                              c.type === 'tool_use' &&
+                              c.id === content.tool_use_id &&
+                              c.name?.toLowerCase() === 'read'
+                            );
+                            if (toolUse?.input?.file_path) {
+                              filePath = toolUse.input.file_path;
+                              break;
+                            }
+                          }
+                        }
+                      }
+
+                      renderedSomething = true;
+                      return (
+                        <div key={idx} className="space-y-2 my-2">
+                          <div className="flex items-center gap-2">
+                            <CheckCircle2 className="h-4 w-4 text-green-500" />
+                            <span className="text-sm font-medium">Read Result</span>
+                          </div>
+                          <ReadResultWidget content={contentText} filePath={filePath} />
+                        </div>
+                      );
+                    }
+
                     // Render simple tool result
                     renderedSomething = true;
                     return (
@@ -494,8 +651,8 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
                           <CheckCircle2 className="h-4 w-4 text-green-500" />
                           <span className="text-sm font-medium">Tool Output</span>
                         </div>
-                        <div className="ml-6 p-2 bg-background/50 rounded border border-border/30">
-                          <pre className="text-xs font-mono overflow-x-auto whitespace-pre-wrap">
+                        <div className="ml-6 p-2 bg-muted/30 rounded border border-border/30">
+                          <pre className="text-xs font-mono overflow-x-auto whitespace-pre-wrap text-muted-foreground">
                             {contentText}
                           </pre>
                         </div>

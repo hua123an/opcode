@@ -1434,7 +1434,7 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
     <div
       ref={parentRef}
       className="flex-1 overflow-y-auto relative"
-      style={{ paddingBottom: '280px' }}
+      style={{ paddingBottom: '0' }}
     >
       <div className="w-full max-w-6xl mx-auto px-4 py-4">
         {filteredMessages.map((message, index) => (
@@ -1500,7 +1500,7 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
 
           {/* Main Content Area */}
           <div className={cn(
-            "flex-1 overflow-hidden transition-all duration-300",
+            "flex-1 overflow-hidden transition-all duration-300 relative",
             showTimeline && "sm:mr-96"
           )}>
             {showPreview ? (
@@ -1619,7 +1619,7 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ delay: 0.5 }}
-                className="fixed bottom-32 right-6 z-50"
+                className="absolute bottom-6 right-6 z-40"
               >
                 <div
                   className="flex items-center backdrop-blur-md border rounded-full shadow-lg overflow-hidden"
@@ -1692,16 +1692,13 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
 
             <div
               className={cn(
-                "fixed bottom-0 left-0 right-0 transition-all duration-300 z-50",
-                "pt-12",
-                showTimeline && "sm:right-96"
+                "w-full transition-all duration-300 z-50 shrink-0",
+                showTimeline && "sm:pr-96"
               )}
-              style={{
-                background: 'linear-gradient(to top, var(--color-card) 0%, color-mix(in srgb, var(--color-card), transparent 20%) 50%, transparent 100%)'
-              }}
             >
               <FloatingPromptInput
                 ref={floatingPromptRef}
+                isFixed={false}
                 defaultModel="claude-sonnet-4-5-20250929"
                 onSend={handleSendPrompt}
                 onCancel={handleCancelExecution}
@@ -1793,7 +1790,10 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
 
             {/* Token Counter - positioned under the Send button */}
             {totalTokens > 0 && (
-              <div className="fixed bottom-0 left-0 right-0 z-30 pointer-events-none">
+              <div className={cn(
+                "w-full transition-all duration-300 z-30",
+                showTimeline && "sm:pr-96"
+              )}>
                 <div className="max-w-6xl mx-auto">
                   <div className="flex justify-end px-4 pb-2">
                     <motion.div

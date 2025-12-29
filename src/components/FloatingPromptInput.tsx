@@ -42,7 +42,7 @@ interface FloatingPromptInputProps {
   /**
    * Callback when prompt is sent
    */
-  onSend: (prompt: string, model: string) => void;
+  onSend: (prompt: string, model: string, thinkingMode?: string) => void;
   /**
    * Whether the input is loading
    */
@@ -58,19 +58,27 @@ interface FloatingPromptInputProps {
   /**
    * Project path for file picker
    */
-  projectPath?: string;
+  projectPath?: string | null;
   /**
-   * Optional className for styling
-   */
-  className?: string;
-  /**
-   * Callback when cancel is clicked (only during loading)
+   * Callback when loading is cancelled
    */
   onCancel?: () => void;
   /**
-   * Extra menu items to display in the prompt bar
+   * Extra menu items on the right
    */
   extraMenuItems?: React.ReactNode;
+  /**
+   * Callback on url change
+   */
+  onUrlChange?: (url: string) => void;
+  /**
+   * Additional className
+   */
+  className?: string;
+  /**
+   * Whether the position should be fixed at bottom
+   */
+  isFixed?: boolean;
 }
 
 export interface FloatingPromptInputRef {
@@ -199,6 +207,7 @@ const FloatingPromptInputInner = (
     className,
     onCancel,
     extraMenuItems,
+    isFixed = true,
   }: FloatingPromptInputProps,
   ref: React.Ref<FloatingPromptInputRef>,
 ) => {
@@ -1095,7 +1104,8 @@ const FloatingPromptInputInner = (
         {/* Fixed Position Input Bar */}
         <div
           className={cn(
-            "fixed bottom-0 left-0 right-0 z-40 backdrop-blur-md border-t border-border/40 shadow-2xl transition-all duration-300",
+            isFixed ? "fixed bottom-0 left-0 right-0 z-40" : "relative w-full z-10",
+            "backdrop-blur-md border-t border-border/40 shadow-2xl transition-all duration-300",
             dragActive && "ring-2 ring-primary ring-offset-2 bg-card/95",
             className
           )}

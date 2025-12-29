@@ -3,9 +3,10 @@ import { ThemeMode } from '@/contexts/ThemeContext';
 /**
  * Claude-themed syntax highlighting theme factory
  * Returns different syntax themes based on the current theme mode
+ * Supports both Prism and HLJS key formats
  * 
  * @param theme - The current theme mode
- * @returns Prism syntax highlighting theme object
+ * @returns Syntax highlighting theme object
  */
 export const getClaudeSyntaxTheme = (theme: ThemeMode): any => {
   const themes = {
@@ -79,178 +80,90 @@ export const getClaudeSyntaxTheme = (theme: ThemeMode): any => {
 
   const colors = themes[theme] || themes.dark;
 
+  // Base styles shared by Prism and HLJS
+  const baseStyles = {
+    color: colors.base,
+    background: colors.background,
+    textShadow: 'none',
+    fontFamily: 'var(--font-mono)',
+    fontSize: '0.875em',
+    textAlign: 'left' as 'left',
+    whiteSpace: 'pre' as 'pre',
+    wordSpacing: 'normal',
+    wordBreak: 'normal',
+    wordWrap: 'normal',
+    lineHeight: '1.5',
+    tabSize: '4',
+    hyphens: 'none' as 'none',
+  };
+
   return {
-    'code[class*="language-"]': {
-      color: colors.base,
-      background: colors.background,
-      textShadow: 'none',
-      fontFamily: 'var(--font-mono)',
-      fontSize: '0.875em',
-      textAlign: 'left',
-      whiteSpace: 'pre',
-      wordSpacing: 'normal',
-      wordBreak: 'normal',
-      wordWrap: 'normal',
-      lineHeight: '1.5',
-      MozTabSize: '4',
-      OTabSize: '4',
-      tabSize: '4',
-      WebkitHyphens: 'none',
-      MozHyphens: 'none',
-      msHyphens: 'none',
-      hyphens: 'none',
-    },
+    // Prism Base
+    'code[class*="language-"]': baseStyles,
     'pre[class*="language-"]': {
-      color: colors.base,
-      background: colors.background,
-      textShadow: 'none',
-      fontFamily: 'var(--font-mono)',
-      fontSize: '0.875em',
-      textAlign: 'left',
-      whiteSpace: 'pre',
-      wordSpacing: 'normal',
-      wordBreak: 'normal',
-      wordWrap: 'normal',
-      lineHeight: '1.5',
-      MozTabSize: '4',
-      OTabSize: '4',
-      tabSize: '4',
-      WebkitHyphens: 'none',
-      MozHyphens: 'none',
-      msHyphens: 'none',
-      hyphens: 'none',
+      ...baseStyles,
       padding: '1em',
       margin: '0',
       overflow: 'auto',
     },
-    ':not(pre) > code[class*="language-"]': {
-      background: theme === 'light' 
-        ? 'rgba(139, 92, 246, 0.1)' 
-        : 'rgba(139, 92, 246, 0.1)',
-      padding: '0.1em 0.3em',
-      borderRadius: '0.3em',
-      whiteSpace: 'normal',
-    },
-    'comment': {
-      color: colors.comment,
-      fontStyle: 'italic',
-    },
-    'prolog': {
-      color: colors.comment,
-    },
-    'doctype': {
-      color: colors.comment,
-    },
-    'cdata': {
-      color: colors.comment,
-    },
-    'punctuation': {
-      color: colors.punctuation,
-    },
-    'namespace': {
-      opacity: '0.7',
-    },
-    'property': {
-      color: colors.property,
-    },
-    'tag': {
-      color: colors.tag,
-    },
-    'boolean': {
-      color: colors.property,
-    },
-    'number': {
-      color: colors.property,
-    },
-    'constant': {
-      color: colors.property,
-    },
-    'symbol': {
-      color: colors.property,
-    },
-    'deleted': {
-      color: '#ef4444',
-    },
-    'selector': {
-      color: colors.variable,
-    },
-    'attr-name': {
-      color: colors.variable,
-    },
-    'string': {
-      color: colors.string,
-    },
-    'char': {
-      color: colors.string,
-    },
-    'builtin': {
-      color: colors.tag,
-    },
-    'url': {
-      color: colors.string,
-    },
-    'inserted': {
-      color: colors.string,
-    },
-    'entity': {
-      color: colors.variable,
-      cursor: 'help',
-    },
-    'atrule': {
-      color: colors.keyword,
-    },
-    'attr-value': {
-      color: colors.string,
-    },
-    'keyword': {
-      color: colors.keyword,
-    },
-    'function': {
-      color: colors.function,
-    },
-    'class-name': {
-      color: colors.property,
-    },
-    'regex': {
-      color: '#06b6d4', // Cyan
-    },
-    'important': {
-      color: colors.property,
-      fontWeight: 'bold',
-    },
-    'variable': {
-      color: colors.variable,
-    },
-    'bold': {
-      fontWeight: 'bold',
-    },
-    'italic': {
-      fontStyle: 'italic',
-    },
-    'operator': {
-      color: colors.operator,
-    },
-    'script': {
-      color: colors.base,
-    },
-    'parameter': {
-      color: colors.property,
-    },
-    'method': {
-      color: colors.function,
-    },
-    'field': {
-      color: colors.property,
-    },
-    'annotation': {
-      color: colors.comment,
-    },
-    'type': {
-      color: colors.variable,
-    },
-    'module': {
-      color: colors.tag,
-    },
+    // HLJS Base
+    'hljs': baseStyles,
+
+    // Shared Tokens
+    'comment': { color: colors.comment, fontStyle: 'italic' },
+    'hljs-comment': { color: colors.comment, fontStyle: 'italic' },
+    'hljs-quote': { color: colors.comment, fontStyle: 'italic' },
+
+    'punctuation': { color: colors.punctuation },
+    'hljs-punctuation': { color: colors.punctuation },
+
+    'property': { color: colors.property },
+    'hljs-attr': { color: colors.property },
+    'hljs-attribute': { color: colors.property },
+    'hljs-variable': { color: colors.property },
+    'hljs-template-variable': { color: colors.property },
+
+    'tag': { color: colors.tag },
+    'hljs-section': { color: colors.tag },
+    'hljs-name': { color: colors.tag },
+    'hljs-selector-tag': { color: colors.tag },
+
+    'string': { color: colors.string },
+    'hljs-string': { color: colors.string },
+    'hljs-bullet': { color: colors.string },
+    'hljs-type': { color: colors.string },
+
+    'function': { color: colors.function },
+    'hljs-function': { color: colors.function },
+    'hljs-title': { color: colors.function },
+    'hljs-title.function_': { color: colors.function },
+
+    'keyword': { color: colors.keyword },
+    'hljs-keyword': { color: colors.keyword },
+    'hljs-selector-attr': { color: colors.keyword },
+    'hljs-selector-pseudo': { color: colors.keyword },
+
+    'variable': { color: colors.variable },
+    'hljs-params': { color: colors.variable },
+
+    'operator': { color: colors.operator },
+    'hljs-operator': { color: colors.operator },
+
+    'number': { color: colors.property },
+    'hljs-number': { color: colors.property },
+
+    'constant': { color: colors.property },
+    'hljs-variable.constant_': { color: colors.property },
+
+    'boolean': { color: colors.property },
+    'hljs-literal': { color: colors.property },
+
+    'important': { fontWeight: 'bold' },
+    'bold': { fontWeight: 'bold' },
+    'italic': { fontStyle: 'italic' },
+
+    'hljs-addition': { color: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)' },
+    'hljs-deletion': { color: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)' },
   };
 };
 

@@ -1261,8 +1261,8 @@ const FloatingPromptInputInner = (
                 >
                   <div className="flex items-center gap-2">
                     <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
-                    <span className="text-[10px] font-bold text-muted-foreground tracking-widest uppercase opacity-70">
-                      {selectedModelMeta.shortName} • {selectedThinkingMode !== 'auto' ? `THINKING: ${selectedThinkingMode.replace('_', ' ')}` : 'THINKING: AUTO'}
+                    <span className="text-[10px] font-bold text-muted-foreground tracking-widest uppercase opacity-80 flex items-center gap-1.5">
+                      {selectedModelData.display_name} • {selectedThinkingMode !== 'auto' ? `THINKING: ${selectedThinkingMode.replace('_', ' ')}` : 'THINKING: AUTO'}
                     </span>
                   </div>
 

@@ -7,7 +7,8 @@ import {
   ChevronUp,
   X,
   Hash,
-  Wrench
+  Wrench,
+  FileText
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -1706,7 +1707,13 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
                 disabled={!projectPath}
                 projectPath={projectPath}
                 extraMenuItems={
-                  <>
+                  <div className="flex items-center gap-1">
+                    {totalTokens > 0 && (
+                      <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mr-2 font-mono opacity-60">
+                        <Hash className="h-2.5 w-2.5" />
+                        <span>{totalTokens.toLocaleString()}</span>
+                      </div>
+                    )}
                     {effectiveSession && (
                       <TooltipSimple content="Session Timeline" side="top">
                         <motion.div
@@ -1717,7 +1724,7 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
                             variant="ghost"
                             size="icon"
                             onClick={() => setShowTimeline(!showTimeline)}
-                            className="h-9 w-9 text-muted-foreground hover:text-foreground"
+                            className="h-8 w-8 text-muted-foreground hover:text-foreground"
                           >
                             <GitBranch className={cn("h-3.5 w-3.5", showTimeline && "text-primary")} />
                           </Button>
@@ -1735,7 +1742,7 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-9 w-9 text-muted-foreground hover:text-foreground"
+                                className="h-8 w-8 text-muted-foreground hover:text-foreground"
                               >
                                 <Copy className="h-3.5 w-3.5" />
                               </Button>
@@ -1747,28 +1754,36 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={handleCopyAsMarkdown}
-                              className="w-full justify-start text-xs"
+                              onClick={() => {
+                                handleCopyAsMarkdown();
+                                setCopyPopoverOpen(false);
+                              }}
+                              className="w-full justify-start text-xs font-normal"
                             >
+                              <Copy className="mr-2 h-3 w-3" />
                               Copy as Markdown
                             </Button>
                             <Button
                               variant="ghost"
                               size="sm"
-                              onClick={handleCopyAsJsonl}
-                              className="w-full justify-start text-xs"
+                              onClick={() => {
+                                handleCopyAsJsonl();
+                                setCopyPopoverOpen(false);
+                              }}
+                              className="w-full justify-start text-xs font-normal"
                             >
+                              <FileText className="mr-2 h-3 w-3" />
                               Copy as JSONL
                             </Button>
                           </div>
                         }
                         open={copyPopoverOpen}
                         onOpenChange={setCopyPopoverOpen}
-                        side="top"
                         align="end"
+                        side="top"
                       />
                     )}
-                    <TooltipSimple content="Checkpoint Settings" side="top">
+                    <TooltipSimple content="Session Settings" side="top">
                       <motion.div
                         whileTap={{ scale: 0.97 }}
                         transition={{ duration: 0.15 }}
@@ -1783,36 +1798,11 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
                         </Button>
                       </motion.div>
                     </TooltipSimple>
-                  </>
+                  </div>
                 }
               />
             </div>
 
-            {/* Token Counter - positioned under the Send button */}
-            {totalTokens > 0 && (
-              <div className={cn(
-                "w-full transition-all duration-300 z-30",
-                showTimeline && "sm:pr-96"
-              )}>
-                <div className="max-w-6xl mx-auto">
-                  <div className="flex justify-end px-4 pb-2">
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.8 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.8 }}
-                      className="backdrop-blur-md border rounded-full px-3 py-1 shadow-lg pointer-events-auto"
-                      style={{ backgroundColor: 'var(--color-card)', opacity: 0.95 }}
-                    >
-                      <div className="flex items-center gap-1.5 text-xs">
-                        <Hash className="h-3 w-3 text-muted-foreground" />
-                        <span className="font-mono">{totalTokens.toLocaleString()}</span>
-                        <span className="text-muted-foreground">tokens</span>
-                      </div>
-                    </motion.div>
-                  </div>
-                </div>
-              </div>
-            )}
           </ErrorBoundary>
 
           {/* Timeline */}

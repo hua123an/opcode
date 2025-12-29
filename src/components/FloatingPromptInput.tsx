@@ -1270,7 +1270,7 @@ const FloatingPromptInputInner = (
                     placeholder={
                       dragActive
                         ? "Drop images here..."
-                        : "Message Claude (@ for files, / for commands)..."
+                        : "Message Claude (Midnight Mode)..."
                     }
                     disabled={disabled}
                     className={cn(

@@ -148,7 +148,7 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
       let renderedSomething = false;
 
       const renderedCard = (
-        <Card className={cn("border-border/40 bg-card/60 backdrop-blur-sm shadow-sm transition-all duration-300 hover:border-primary/20", className)}>
+        <Card className={cn("border-2 border-primary/30 bg-card/60 backdrop-blur-sm shadow-md transition-all duration-300 hover:border-primary/50", className)}>
           <CardContent className="p-5">
             <div className="flex items-start gap-4">
               <div className="p-1.5 rounded-lg bg-primary/10 text-primary shrink-0">

@@ -58,7 +58,7 @@ const DEFAULT_CUSTOM_COLORS: CustomThemeColors = {
 };
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setThemeState] = useState<ThemeMode>('gray');
+  const [theme, setThemeState] = useState<ThemeMode>('dark');
   const [customColors, setCustomColorsState] = useState<CustomThemeColors>(DEFAULT_CUSTOM_COLORS);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -68,20 +68,20 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       try {
         // Load theme preference
         const savedTheme = await api.getSetting(THEME_STORAGE_KEY);
-        
+
         if (savedTheme) {
           const themeMode = savedTheme as ThemeMode;
           setThemeState(themeMode);
           await applyTheme(themeMode, customColors);
         } else {
-          // No saved preference: apply gray as the default theme
-          setThemeState('gray');
-          await applyTheme('gray', customColors);
+          // No saved preference: apply dark as the default theme
+          setThemeState('dark');
+          await applyTheme('dark', customColors);
         }
 
         // Load custom colors
         const savedColors = await api.getSetting(CUSTOM_COLORS_STORAGE_KEY);
-        
+
         if (savedColors) {
           const colors = JSON.parse(savedColors) as CustomThemeColors;
           setCustomColorsState(colors);
@@ -102,13 +102,13 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Apply theme to document
   const applyTheme = useCallback(async (themeMode: ThemeMode, colors: CustomThemeColors) => {
     const root = document.documentElement;
-    
+
     // Remove all theme classes
     root.classList.remove('theme-dark', 'theme-gray', 'theme-light', 'theme-custom');
-    
+
     // Add new theme class
     root.classList.add(`theme-${themeMode}`);
-    
+
     // If custom theme, apply custom colors as CSS variables
     if (themeMode === 'custom') {
       Object.entries(colors).forEach(([key, value]) => {
@@ -129,11 +129,11 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const setTheme = useCallback(async (newTheme: ThemeMode) => {
     try {
       setIsLoading(true);
-      
+
       // Apply theme immediately
       setThemeState(newTheme);
       await applyTheme(newTheme, customColors);
-      
+
       // Save to storage
       await api.saveSetting(THEME_STORAGE_KEY, newTheme);
     } catch (error) {
@@ -146,15 +146,15 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const setCustomColors = useCallback(async (colors: Partial<CustomThemeColors>) => {
     try {
       setIsLoading(true);
-      
+
       const newColors = { ...customColors, ...colors };
       setCustomColorsState(newColors);
-      
+
       // Apply immediately if custom theme is active
       if (theme === 'custom') {
         await applyTheme('custom', newColors);
       }
-      
+
       // Save to storage
       await api.saveSetting(CUSTOM_COLORS_STORAGE_KEY, JSON.stringify(newColors));
     } catch (error) {

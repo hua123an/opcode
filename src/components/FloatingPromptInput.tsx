@@ -1095,8 +1095,8 @@ const FloatingPromptInputInner = (
         {/* Fixed Position Input Bar */}
         <div
           className={cn(
-            "fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-sm border-t border-border shadow-lg",
-            dragActive && "ring-2 ring-primary ring-offset-2",
+            "fixed bottom-0 left-0 right-0 z-40 bg-background/80 backdrop-blur-md border-t border-border/40 shadow-2xl transition-all duration-300",
+            dragActive && "ring-2 ring-primary ring-offset-2 bg-background/95",
             className
           )}
           onDragEnter={handleDrag}
@@ -1104,20 +1104,20 @@ const FloatingPromptInputInner = (
           onDragOver={handleDrag}
           onDrop={handleDrop}
         >
-          <div className="container mx-auto">
+          <div className="container mx-auto max-w-5xl">
             {/* Image previews */}
             {(embeddedImages.length > 0 || attachments.length > 0) && (
               <ImagePreview
                 images={[...embeddedImages, ...attachments.map(a => a.preview || a.path)]}
                 onRemove={handleRemoveImage}
-                className="border-b border-border"
+                className="border-b border-border/30 bg-muted/20"
               />
             )}
 
-            <div className="p-3">
-              <div className="flex items-end gap-2">
+            <div className="p-4">
+              <div className="flex items-end gap-3">
                 {/* Model & Thinking Mode Selectors - Left side, fixed at bottom */}
-                <div className="flex items-center gap-1 shrink-0 mb-1">
+                <div className="flex items-center gap-1 shrink-0 mb-1.5">
                   <Popover
                     trigger={
                       <Tooltip>
@@ -1130,15 +1130,15 @@ const FloatingPromptInputInner = (
                               variant="ghost"
                               size="sm"
                               disabled={disabled}
-                              className="h-9 px-2 hover:bg-accent/50 gap-1"
+                              className="h-8 px-2.5 hover:bg-muted/50 gap-1.5 text-xs font-medium rounded-full border border-transparent hover:border-border/40"
                             >
                               <span className={selectedModelMeta.color}>
                                 {selectedModelMeta.icon}
                               </span>
-                              <span className="text-[10px] font-bold opacity-70">
+                              <span className="opacity-80">
                                 {selectedModelMeta.shortName}
                               </span>
-                              <ChevronUp className="h-3 w-3 ml-0.5 opacity-50" />
+                              <ChevronUp className="h-3 w-3 opacity-40 ml-0.5" />
                             </Button>
                           </motion.div>
                         </TooltipTrigger>
@@ -1149,7 +1149,7 @@ const FloatingPromptInputInner = (
                       </Tooltip>
                     }
                     content={
-                      <div className="w-[300px] p-1 max-h-[300px] overflow-y-auto">
+                      <div className="w-[300px] p-1.5 max-h-[300px] overflow-y-auto">
                         {availableModels.map((model) => {
                           const meta = getModelMetadata(model.id);
                           return (
@@ -1160,9 +1160,9 @@ const FloatingPromptInputInner = (
                                 setModelPickerOpen(false);
                               }}
                               className={cn(
-                                "w-full flex items-start gap-3 p-3 rounded-md transition-colors text-left",
-                                "hover:bg-accent",
-                                selectedModel === model.id && "bg-accent"
+                                "w-full flex items-start gap-3 p-3 rounded-lg transition-all text-left mb-1",
+                                "hover:bg-accent hover:text-accent-foreground",
+                                selectedModel === model.id ? "bg-accent/80 shadow-sm" : "text-muted-foreground hover:text-foreground"
                               )}
                             >
                               <div className="mt-0.5">
@@ -1171,8 +1171,8 @@ const FloatingPromptInputInner = (
                                 </span>
                               </div>
                               <div className="flex-1 space-y-1">
-                                <div className="font-medium text-sm">{model.display_name}</div>
-                                <div className="text-xs text-muted-foreground">
+                                <div className="font-medium text-sm text-foreground">{model.display_name}</div>
+                                <div className="text-xs opacity-70">
                                   {model.id}
                                 </div>
                               </div>
@@ -1199,15 +1199,15 @@ const FloatingPromptInputInner = (
                               variant="ghost"
                               size="sm"
                               disabled={disabled}
-                              className="h-9 px-2 hover:bg-accent/50 gap-1"
+                              className="h-8 px-2.5 hover:bg-muted/50 gap-1.5 text-xs font-medium rounded-full border border-transparent hover:border-border/40"
                             >
                               <span className={THINKING_MODES.find(m => m.id === selectedThinkingMode)?.color}>
                                 {THINKING_MODES.find(m => m.id === selectedThinkingMode)?.icon}
                               </span>
-                              <span className="text-[10px] font-semibold opacity-70">
+                              <span className="opacity-80">
                                 {THINKING_MODES.find(m => m.id === selectedThinkingMode)?.shortName}
                               </span>
-                              <ChevronUp className="h-3 w-3 ml-0.5 opacity-50" />
+                              <ChevronUp className="h-3 w-3 opacity-40 ml-0.5" />
                             </Button>
                           </motion.div>
                         </TooltipTrigger>
@@ -1218,7 +1218,7 @@ const FloatingPromptInputInner = (
                       </Tooltip>
                     }
                     content={
-                      <div className="w-[280px] p-1">
+                      <div className="w-[280px] p-1.5">
                         {THINKING_MODES.map((mode) => (
                           <button
                             key={mode.id}
@@ -1227,19 +1227,19 @@ const FloatingPromptInputInner = (
                               setThinkingModePickerOpen(false);
                             }}
                             className={cn(
-                              "w-full flex items-start gap-3 p-3 rounded-md transition-colors text-left",
-                              "hover:bg-accent",
-                              selectedThinkingMode === mode.id && "bg-accent"
+                              "w-full flex items-start gap-3 p-3 rounded-lg transition-all text-left mb-1",
+                              "hover:bg-accent hover:text-accent-foreground",
+                              selectedThinkingMode === mode.id ? "bg-accent/80 shadow-sm" : "text-muted-foreground hover:text-foreground"
                             )}
                           >
                             <span className={cn("mt-0.5", mode.color)}>
                               {mode.icon}
                             </span>
                             <div className="flex-1 space-y-1">
-                              <div className="font-medium text-sm">
+                              <div className="font-medium text-sm text-foreground">
                                 {mode.name}
                               </div>
-                              <div className="text-xs text-muted-foreground">
+                              <div className="text-xs opacity-70">
                                 {mode.description}
                               </div>
                             </div>
@@ -1257,7 +1257,8 @@ const FloatingPromptInputInner = (
                 </div>
 
                 {/* Prompt Input - Center */}
-                <div className="flex-1 relative">
+                <div className="flex-1 relative group">
+                  <div className="absolute inset-0 bg-muted/30 rounded-xl -z-10 group-hover:bg-muted/40 transition-colors" />
                   <Textarea
                     ref={textareaRef}
                     value={prompt}
@@ -1273,18 +1274,20 @@ const FloatingPromptInputInner = (
                     }
                     disabled={disabled}
                     className={cn(
-                      "resize-none pr-20 pl-3 py-2.5 transition-all duration-150",
+                      "resize-none pr-24 pl-4 py-3 min-h-[50px] transition-all duration-200",
+                      "bg-transparent border-transparent shadow-none focus-visible:ring-0 md:text-sm text-base",
+                      "placeholder:text-muted-foreground/60",
                       dragActive && "border-primary",
                       textareaHeight >= 240 && "overflow-y-auto scrollbar-thin"
                     )}
                     style={{
-                      height: `${textareaHeight} px`,
+                      height: `${Math.max(textareaHeight, 52)}px`, // Slightly taller default
                       overflowY: textareaHeight >= 240 ? 'auto' : 'hidden'
                     }}
                   />
 
                   {/* Action buttons inside input - fixed at bottom right */}
-                  <div className="absolute right-1.5 bottom-1.5 flex items-center gap-0.5">
+                  <div className="absolute right-2 bottom-2 flex items-center gap-1">
                     <TooltipSimple content="Expand (Ctrl+Shift+E)" side="top">
                       <motion.div
                         whileTap={{ scale: 0.97 }}
@@ -1295,9 +1298,9 @@ const FloatingPromptInputInner = (
                           size="icon"
                           onClick={() => setIsExpanded(true)}
                           disabled={disabled}
-                          className="h-8 w-8 hover:bg-accent/50 transition-colors"
+                          className="h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-background/50 rounded-lg transition-colors"
                         >
-                          <Maximize2 className="h-3.5 w-3.5" />
+                          <Maximize2 className="h-4 w-4" />
                         </Button>
                       </motion.div>
                     </TooltipSimple>
@@ -1313,12 +1316,13 @@ const FloatingPromptInputInner = (
                           variant={isLoading ? "destructive" : prompt.trim() ? "default" : "ghost"}
                           size="icon"
                           className={cn(
-                            "h-8 w-8 transition-all",
-                            prompt.trim() && !isLoading && "shadow-sm"
+                            "h-8 w-8 transition-all duration-300 rounded-lg",
+                            prompt.trim() && !isLoading ? "shadow-md bg-primary text-primary-foreground hover:bg-primary/90" : "text-muted-foreground hover:bg-background/50",
+                            isLoading && "hover:bg-destructive/90 shadow-md"
                           )}
                         >
                           {isLoading ? (
-                            <Square className="h-4 w-4" />
+                            <Square className="h-4 w-4 fill-current" />
                           ) : (
                             <Send className="h-4 w-4" />
                           )}

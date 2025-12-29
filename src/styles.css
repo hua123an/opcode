@@ -86,141 +86,139 @@ html {
 }
 
 /* Dark theme configuration */
+/* Premium Dark Theme (Midnight Modern) */
 @theme {
-  /* Colors */
-  --color-background: oklch(0.10 0.01 240);
-  --color-foreground: oklch(0.95 0.01 240);
-  --color-card: oklch(0.14 0.01 240);
-  --color-card-foreground: oklch(0.95 0.01 240);
-  --color-popover: oklch(0.13 0.01 240);
-  --color-popover-foreground: oklch(0.95 0.01 240);
-  --color-primary: oklch(0.95 0.01 240);
-  --color-primary-foreground: oklch(0.14 0.01 240);
-  --color-secondary: oklch(0.18 0.01 240);
-  --color-secondary-foreground: oklch(0.95 0.01 240);
-  --color-muted: oklch(0.16 0.01 240);
-  --color-muted-foreground: oklch(0.65 0.01 240);
-  --color-accent: oklch(0.18 0.01 240);
-  --color-accent-foreground: oklch(0.95 0.01 240);
+  /* Colors - Deep, rich backdrops with vibrant accents */
+  --color-background: oklch(0.11 0.02 260); /* Deep cool navy/black */
+  --color-foreground: oklch(0.96 0.005 260); /* Crisp white/grey */
+  
+  --color-card: oklch(0.14 0.02 260); /* Slightly lighter */
+  --color-card-foreground: oklch(0.96 0.005 260);
+  
+  --color-popover: oklch(0.13 0.02 260);
+  --color-popover-foreground: oklch(0.96 0.005 260);
+  
+  --color-primary: oklch(0.65 0.18 250); /* Vibrant Indigo/Purple */
+  --color-primary-foreground: oklch(0.98 0 0);
+  
+  --color-secondary: oklch(0.18 0.03 260);
+  --color-secondary-foreground: oklch(0.96 0.005 260);
+  
+  --color-muted: oklch(0.16 0.02 260);
+  --color-muted-foreground: oklch(0.65 0.02 260);
+  
+  --color-accent: oklch(0.20 0.04 260);
+  --color-accent-foreground: oklch(0.98 0 0);
+  
   --color-destructive: oklch(0.6 0.2 25);
   --color-destructive-foreground: oklch(0.98 0.01 240);
-  --color-border: oklch(0.20 0.01 240);
-  --color-input: oklch(0.20 0.01 240);
-  --color-ring: oklch(0.50 0.015 240);
   
-  /* Additional colors for status messages */
-  --color-green-500: oklch(0.72 0.20 142);
-  --color-green-600: oklch(0.64 0.22 142);
+  --color-border: oklch(0.20 0.03 260);
+  --color-input: oklch(0.18 0.03 260);
+  --color-ring: oklch(0.65 0.18 250);
+  
+  /* Status Colors */
+  --color-green-500: oklch(0.70 0.18 145);
+  --color-green-600: oklch(0.60 0.18 145);
 
-  /* Border radius */
-  --radius-sm: 0.25rem;
-  --radius-base: 0.375rem;
-  --radius-md: 0.5rem;
-  --radius-lg: 0.75rem;
-  --radius-xl: 1rem;
+  /* Border radius - slightly softer */
+  --radius-sm: 0.375rem;
+  --radius-base: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
 
   /* Fonts */
-  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
+  --font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", ui-monospace, monospace;
   
   /* Font Weights */
   --font-weight-thin: 100;
-  --font-weight-extralight: 200;
   --font-weight-light: 300;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
-  --font-weight-extrabold: 800;
-  --font-weight-black: 900;
   
-  /* Font Sizes */
-  --text-xs: 0.75rem;      /* 12px */
-  --text-sm: 0.875rem;     /* 14px */
-  --text-base: 1rem;       /* 16px */
-  --text-lg: 1.125rem;     /* 18px */
-  --text-xl: 1.25rem;      /* 20px */
-  --text-2xl: 1.5rem;      /* 24px */
-  --text-3xl: 1.875rem;    /* 30px */
-  --text-4xl: 2.25rem;     /* 36px */
-  --text-5xl: 3rem;        /* 48px */
-  
-  /* Line Heights */
-  --leading-none: 1;
-  --leading-tight: 1.25;
-  --leading-snug: 1.375;
-  --leading-normal: 1.5;
-  --leading-relaxed: 1.625;
-  --leading-loose: 1.75;
-  
-  /* Letter Spacing */
-  --tracking-tighter: -0.05em;
-  --tracking-tight: -0.025em;
-  --tracking-normal: 0;
-  --tracking-wide: 0.025em;
-  --tracking-wider: 0.05em;
-  --tracking-widest: 0.1em;
-
   /* Transitions */
   --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Glassmorphism Utilities */
+.glass {
+  background: rgba(17, 18, 25, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-card {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.glass-card:hover {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+  transition: all 0.2s var(--ease-smooth);
 }
 
 /* Theme Variations */
-/* Default is dark theme - already defined above */
 
-/* Light Theme */
+/* Light Theme (Clean & Airy) */
 .theme-light {
-  --color-background: oklch(0.98 0.01 240);
-  --color-foreground: oklch(0.12 0.01 240);
-  --color-card: oklch(0.96 0.01 240);
-  --color-card-foreground: oklch(0.12 0.01 240);
-  --color-popover: oklch(0.98 0.01 240);
-  --color-popover-foreground: oklch(0.12 0.01 240);
-  --color-primary: oklch(0.12 0.01 240);
-  --color-primary-foreground: oklch(0.98 0.01 240);
-  --color-secondary: oklch(0.94 0.01 240);
-  --color-secondary-foreground: oklch(0.12 0.01 240);
-  --color-muted: oklch(0.94 0.01 240);
-  --color-muted-foreground: oklch(0.45 0.01 240);
-  --color-accent: oklch(0.94 0.01 240);
-  --color-accent-foreground: oklch(0.12 0.01 240);
+  --color-background: oklch(0.99 0.005 260);
+  --color-foreground: oklch(0.15 0.02 260);
+  --color-card: oklch(1.0 0 0);
+  --color-card-foreground: oklch(0.15 0.02 260);
+  --color-popover: oklch(1.0 0 0);
+  --color-popover-foreground: oklch(0.15 0.02 260);
+  --color-primary: oklch(0.60 0.18 250);
+  --color-primary-foreground: oklch(1.0 0 0);
+  --color-secondary: oklch(0.96 0.01 260);
+  --color-secondary-foreground: oklch(0.15 0.02 260);
+  --color-muted: oklch(0.96 0.01 260);
+  --color-muted-foreground: oklch(0.50 0.02 260);
+  --color-accent: oklch(0.94 0.02 260);
+  --color-accent-foreground: oklch(0.15 0.02 260);
   --color-destructive: oklch(0.6 0.2 25);
   --color-destructive-foreground: oklch(0.98 0.01 240);
-  --color-border: oklch(0.90 0.01 240);
-  --color-input: oklch(0.90 0.01 240);
-  --color-ring: oklch(0.52 0.015 240);
+  --color-border: oklch(0.92 0.01 260);
+  --color-input: oklch(0.92 0.01 260);
+  --color-ring: oklch(0.60 0.18 250);
   
-  /* Additional colors for status messages */
-  --color-green-500: oklch(0.62 0.20 142);
-  --color-green-600: oklch(0.54 0.22 142);
+  --color-green-500: oklch(0.60 0.18 145);
+  --color-green-600: oklch(0.50 0.18 145);
 }
 
-/* Gray Theme */
+/* Gray Theme (Neutral Pro) */
 .theme-gray {
-  --color-background: oklch(0.18 0.01 240);
-  --color-foreground: oklch(0.95 0.01 240);
-  --color-card: oklch(0.23 0.01 240);
-  --color-card-foreground: oklch(0.95 0.01 240);
-  --color-popover: oklch(0.21 0.01 240);
-  --color-popover-foreground: oklch(0.95 0.01 240);
-  --color-primary: oklch(0.95 0.01 240);
-  --color-primary-foreground: oklch(0.23 0.01 240);
-  --color-secondary: oklch(0.27 0.01 240);
-  --color-secondary-foreground: oklch(0.95 0.01 240);
-  --color-muted: oklch(0.27 0.01 240);
-  --color-muted-foreground: oklch(0.65 0.01 240);
-  --color-accent: oklch(0.27 0.01 240);
-  --color-accent-foreground: oklch(0.95 0.01 240);
+  --color-background: oklch(0.20 0.01 280);
+  --color-foreground: oklch(0.95 0.01 280);
+  --color-card: oklch(0.24 0.01 280);
+  --color-card-foreground: oklch(0.95 0.01 280);
+  --color-popover: oklch(0.23 0.01 280);
+  --color-popover-foreground: oklch(0.95 0.01 280);
+  --color-primary: oklch(0.85 0.01 280); /* White/Silver primary */
+  --color-primary-foreground: oklch(0.20 0.01 280);
+  --color-secondary: oklch(0.28 0.01 280);
+  --color-secondary-foreground: oklch(0.95 0.01 280);
+  --color-muted: oklch(0.28 0.01 280);
+  --color-muted-foreground: oklch(0.65 0.01 280);
+  --color-accent: oklch(0.30 0.01 280);
+  --color-accent-foreground: oklch(0.95 0.01 280);
   --color-destructive: oklch(0.6 0.2 25);
-  --color-destructive-foreground: oklch(0.98 0.01 240);
-  --color-border: oklch(0.32 0.01 240);
-  --color-input: oklch(0.32 0.01 240);
-  --color-ring: oklch(0.55 0.015 240);
+  --color-destructive-foreground: oklch(0.98 0.01 280);
+  --color-border: oklch(0.32 0.01 280);
+  --color-input: oklch(0.32 0.01 280);
+  --color-ring: oklch(0.60 0.01 280);
   
-  /* Additional colors for status messages */
-  --color-green-500: oklch(0.72 0.20 142);
-  --color-green-600: oklch(0.64 0.22 142);
+  --color-green-500: oklch(0.70 0.15 145);
+  --color-green-600: oklch(0.60 0.15 145);
 }
 
 /* White Theme (High Contrast Light) */

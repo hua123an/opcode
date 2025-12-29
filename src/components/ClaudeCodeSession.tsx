@@ -721,6 +721,9 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
                 if (streamingMessageRef.current) {
                   streamingMessageRef.current.text += deltaText;
 
+                  // Capture the current text before entering async callback
+                  const currentText = streamingMessageRef.current.text;
+
                   // Update the last message with the accumulated text
                   setMessages((prev) => {
                     const lastIndex = prev.length - 1;
@@ -730,7 +733,7 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
                       if (lastMsg.message?.content?.[0]) {
                         lastMsg.message = {
                           ...lastMsg.message,
-                          content: [{ type: 'text', text: streamingMessageRef.current!.text }],
+                          content: [{ type: 'text', text: currentText }],
                         };
                       }
                       updated[lastIndex] = lastMsg;

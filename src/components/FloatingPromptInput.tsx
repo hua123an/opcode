@@ -210,12 +210,32 @@ const FloatingPromptInputInner = (
   ref: React.Ref<FloatingPromptInputRef>,
 ) => {
   const [prompt, setPrompt] = useState("");
-  const [selectedModel, setSelectedModel] = useState<string>(defaultModel);
+  const [selectedModel, setSelectedModel] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('last_selected_model');
+      if (saved) return saved;
+    }
+    return defaultModel;
+  });
   const [availableModels, setAvailableModels] = useState<ModelInfo[]>([]);
-  const [selectedThinkingMode, setSelectedThinkingMode] = useState<ThinkingMode>("auto");
+  const [selectedThinkingMode, setSelectedThinkingMode] = useState<ThinkingMode>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('last_selected_thinking_mode');
+      if (saved) return saved as ThinkingMode;
+    }
+    return "auto";
+  });
   const [isExpanded, setIsExpanded] = useState(false);
   const [modelPickerOpen, setModelPickerOpen] = useState(false);
   const [thinkingModePickerOpen, setThinkingModePickerOpen] = useState(false);
+
+  // Persist model and thinking mode
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('last_selected_model', selectedModel);
+      localStorage.setItem('last_selected_thinking_mode', selectedThinkingMode);
+    }
+  }, [selectedModel, selectedThinkingMode]);
   const [showFilePicker, setShowFilePicker] = useState(false);
 
   useEffect(() => {

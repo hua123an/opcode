@@ -18,23 +18,12 @@ on:
       APPLE_PASSWORD:
         required: true
   workflow_dispatch:
-    inputs:
-      skip_build:
-        description: 'Skip build and use artifacts from a previous run'
-        required: false
-        default: false
-        type: boolean
-      run_id:
-        description: 'Run ID to download artifacts from (leave empty for latest)'
-        required: false
-        type: string
   push:
     branches: [main]
 
 jobs:
   build:
     name: Build macOS ${{ matrix.target }}
-    if: ${{ !inputs.skip_build }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -103,35 +92,16 @@ jobs:
   universal:
     name: Create Universal Binary
     needs: [build]
-    if: ${{ !cancelled() && (needs.build.result == 'success' || needs.build.result == 'skipped') }}
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       
       - name: Download artifacts from current workflow
-        if: ${{ !inputs.skip_build }}
         uses: actions/download-artifact@v4
         with:
           pattern: macos-*
           path: artifacts
       
-      - name: Download artifacts from specific run
-        if: ${{ inputs.skip_build && inputs.run_id != '' }}
-        uses: dawidd6/action-download-artifact@v3
-        with:
-          workflow: build-macos.yml
-          run_id: ${{ inputs.run_id }}
-          name: macos-*
-          path: artifacts
-      
-      - name: Download artifacts from latest run
-        if: ${{ inputs.skip_build && inputs.run_id == '' }}
-        uses: dawidd6/action-download-artifact@v3
-        with:
-          workflow: build-macos.yml
-          workflow_conclusion: success
-          name: macos-*
-          path: artifacts
       
       - name: List downloaded artifacts
         run: |

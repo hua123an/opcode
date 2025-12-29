@@ -1036,12 +1036,20 @@ const FloatingPromptInputInner = (
                         <TooltipSimple content="Select Model" side="top">
                           <motion.div whileTap={{ scale: 0.95 }}>
                             <Button
-                              variant="secondary"
+                              variant="ghost"
                               size="sm"
                               disabled={disabled}
-                              className="h-9 w-9 p-0 rounded-xl flex items-center justify-center border shadow-sm"
+                              className={cn(
+                                "h-9 w-9 p-0 rounded-xl flex items-center justify-center border shadow-sm transition-all",
+                                modelPickerOpen ? "border-primary/30" : "bg-card/50"
+                              )}
+                              style={{
+                                backgroundColor: modelPickerOpen
+                                  ? 'color-mix(in srgb, var(--color-primary), transparent 85%)'
+                                  : undefined
+                              }}
                             >
-                              <span className={cn("text-lg", selectedModelMeta.color)}>
+                              <span className={cn("text-lg transition-colors", modelPickerOpen ? "text-primary" : selectedModelMeta.color)}>
                                 {selectedModelMeta.icon}
                               </span>
                             </Button>
@@ -1103,12 +1111,23 @@ const FloatingPromptInputInner = (
                         <TooltipSimple content={`Thinking: ${selectedThinkingMode}`} side="top">
                           <motion.div whileTap={{ scale: 0.95 }}>
                             <Button
-                              variant="secondary"
+                              variant="ghost"
                               size="sm"
                               disabled={disabled}
-                              className="h-9 w-9 p-0 rounded-xl flex items-center justify-center border shadow-sm"
+                              className={cn(
+                                "h-9 w-9 p-0 rounded-xl flex items-center justify-center border shadow-sm transition-all",
+                                thinkingModePickerOpen ? "border-primary/30" : "bg-card/50"
+                              )}
+                              style={{
+                                backgroundColor: thinkingModePickerOpen
+                                  ? 'color-mix(in srgb, var(--color-primary), transparent 85%)'
+                                  : undefined
+                              }}
                             >
-                              <span className={cn("text-lg", THINKING_MODES.find(m => m.id === selectedThinkingMode)?.color)}>
+                              <span className={cn(
+                                "text-lg transition-colors",
+                                thinkingModePickerOpen ? "text-primary" : THINKING_MODES.find(m => m.id === selectedThinkingMode)?.color
+                              )}>
                                 {THINKING_MODES.find(m => m.id === selectedThinkingMode)?.icon}
                               </span>
                             </Button>

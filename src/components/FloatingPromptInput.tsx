@@ -1261,7 +1261,10 @@ const FloatingPromptInputInner = (
 
                 {/* Prompt Input - Center */}
                 <div className="flex-1 relative group">
-                  <div className="absolute inset-0 bg-secondary/30 rounded-xl -z-10 group-hover:bg-secondary/40 transition-colors" />
+                  <div
+                    className="absolute inset-0 rounded-xl -z-10 transition-colors group-hover:opacity-40"
+                    style={{ backgroundColor: 'var(--color-secondary)', opacity: 0.3 }}
+                  />
                   <Textarea
                     ref={textareaRef}
                     value={prompt}

@@ -1525,9 +1525,9 @@ export const CommandWidget: React.FC<{
 }> = ({ commandName, commandMessage, commandArgs }) => {
   return (
     <div className="rounded-lg border bg-background/50 overflow-hidden">
-      <div className="px-4 py-2 border-b bg-muted/50 flex items-center gap-2">
+      <div className="px-4 py-2 border-b bg-secondary/30 flex items-center gap-2">
         <Terminal className="h-3.5 w-3.5 text-blue-500" />
-        <span className="text-xs font-mono text-blue-400">Command</span>
+        <span className="text-xs font-mono text-blue-500/80">Command</span>
       </div>
       <div className="p-3 space-y-1">
         <div className="flex items-center gap-2">

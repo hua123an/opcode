@@ -1,211 +1,115 @@
-
 <div align="center">
-  <img src="src-tauri/icons/icon.png" alt="opcode Logo" width="120" height="120">
+  <img src="src-tauri/icons/icon.png" alt="Opcode Logo" width="120" height="120">
 
-  <h1>opcode</h1>
+  <h1>Opcode</h1>
   
   <p>
-    <strong>A powerful GUI app and Toolkit for Claude Code</strong>
+    <strong>🚀 一个强大的 Claude Code GUI 客户端与工具集</strong>
   </p>
   <p>
-    <strong>Create custom agents, manage interactive Claude Code sessions, run secure background agents, and more.</strong>
+    创建自定义 AI Agent、管理交互式 Claude Code 会话、运行安全的后台代理，以及更多功能。
   </p>
   
   <p>
-    <a href="#features"><img src="https://img.shields.io/badge/Features-✨-blue?style=for-the-badge" alt="Features"></a>
-    <a href="#installation"><img src="https://img.shields.io/badge/Install-🚀-green?style=for-the-badge" alt="Installation"></a>
-    <a href="#usage"><img src="https://img.shields.io/badge/Usage-📖-purple?style=for-the-badge" alt="Usage"></a>
-    <a href="#development"><img src="https://img.shields.io/badge/Develop-🛠️-orange?style=for-the-badge" alt="Development"></a>
-    <a href="https://discord.com/invite/KYwhHVzUsY"><img src="https://img.shields.io/badge/Discord-Join-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord"></a>
+    <a href="#-功能特性"><img src="https://img.shields.io/badge/功能-✨-blue?style=for-the-badge" alt="Features"></a>
+    <a href="#-快速开始"><img src="https://img.shields.io/badge/安装-🚀-green?style=for-the-badge" alt="Installation"></a>
+    <a href="#-开发指南"><img src="https://img.shields.io/badge/开发-🛠️-orange?style=for-the-badge" alt="Development"></a>
+    <a href="https://github.com/hua123an/opcode"><img src="https://img.shields.io/badge/GitHub-⭐-yellow?style=for-the-badge" alt="GitHub"></a>
   </p>
 </div>
 
-![457013521-6133a738-d0cb-4d3e-8746-c6768c82672c](https://github.com/user-attachments/assets/a028de9e-d881-44d8-bae5-7326ab3558b9)
+---
 
+## 📖 简介
 
+**Opcode** 是一款基于 Tauri 2 构建的现代化桌面应用程序，为 Claude Code 提供了优雅的图形用户界面。它将命令行工具的强大功能与可视化界面的便捷性相结合，让 AI 辅助开发变得更加直观和高效。
 
-https://github.com/user-attachments/assets/6bceea0f-60b6-4c3e-a745-b891de00b8d0
+### 核心优势
 
+- � **直观的可视化界面** - 告别命令行，用图形界面管理所有 Claude Code 操作
+- ⚡ **高性能虚拟化列表** - 即使处理数千条消息也能流畅滚动
+- � **本地优先** - 所有数据存储在本地，保护您的隐私
+- 🎨 **现代化设计** - 深色/浅色主题，美观的 UI 动效
 
+---
 
-> [!TIP]
-> **⭐ Star the repo and follow [@getAsterisk](https://x.com/getAsterisk) on X for early access to `asteria-swe-v0`**.
+## ✨ 功能特性
 
-> [!NOTE]
-> This project is not affiliated with, endorsed by, or sponsored by Anthropic. Claude is a trademark of Anthropic, PBC. This is an independent developer project using Claude.
+### �️ 项目与会话管理
 
-## 🌟 Overview
+| 功能 | 描述 |
+|------|------|
+| **可视化项目浏览器** | 浏览 `~/.claude/projects/` 中的所有项目 |
+| **会话历史** | 查看并恢复过去的编码会话，保持完整上下文 |
+| **智能搜索** | 快速搜索项目和会话 |
+| **会话洞察** | 一览显示首条消息、时间戳等元数据 |
 
-**opcode** is a powerful desktop application that transforms how you interact with Claude Code. Built with Tauri 2, it provides a beautiful GUI for managing your Claude Code sessions, creating custom agents, tracking usage, and much more.
+### 🤖 CC Agents (自定义 AI 代理)
 
-Think of opcode as your command center for Claude Code - bridging the gap between the command-line tool and a visual experience that makes AI-assisted development more intuitive and productive.
+- **自定义系统提示词** - 为不同任务创建专用代理
+- **后台执行** - 在独立进程中运行代理，不阻塞 UI
+- **执行历史** - 追踪所有代理运行记录和性能指标
+- **权限控制** - 配置文件读写和网络访问权限
 
-## 📋 Table of Contents
+### 📊 使用分析仪表板
 
-- [🌟 Overview](#-overview)
-- [✨ Features](#-features)
-  - [🗂️ Project & Session Management](#️-project--session-management)
-  - [🤖 CC Agents](#-cc-agents)
-  
-  - [📊 Usage Analytics Dashboard](#-usage-analytics-dashboard)
-  - [🔌 MCP Server Management](#-mcp-server-management)
-  - [⏰ Timeline & Checkpoints](#-timeline--checkpoints)
-  - [📝 CLAUDE.md Management](#-claudemd-management)
-- [📖 Usage](#-usage)
-  - [Getting Started](#getting-started)
-  - [Managing Projects](#managing-projects)
-  - [Creating Agents](#creating-agents)
-  - [Tracking Usage](#tracking-usage)
-  - [Working with MCP Servers](#working-with-mcp-servers)
-- [🚀 Installation](#-installation)
-- [🔨 Build from Source](#-build-from-source)
-- [🛠️ Development](#️-development)
-- [🔒 Security](#-security)
-- [🤝 Contributing](#-contributing)
-- [📄 License](#-license)
-- [🙏 Acknowledgments](#-acknowledgments)
+- **成本追踪** - 实时监控 Claude API 使用量和费用
+- **Token 分析** - 按模型、项目和时间段的详细分解
+- **可视化图表** - 展示使用趋势的精美图表
+- **数据导出** - 导出使用数据用于分析和报告
 
-## ✨ Features
+### 🔌 MCP Server 管理
 
-### 🗂️ **Project & Session Management**
-- **Visual Project Browser**: Navigate through all your Claude Code projects in `~/.claude/projects/`
-- **Session History**: View and resume past coding sessions with full context
-- **Smart Search**: Find projects and sessions quickly with built-in search
-- **Session Insights**: See first messages, timestamps, and session metadata at a glance
+- **服务器注册中心** - 从统一 UI 管理 Model Context Protocol 服务器
+- **易于配置** - 通过 UI 或 JSON 导入添加服务器
+- **连接测试** - 使用前验证服务器连接
+- **Claude Desktop 导入** - 从 Claude Desktop 导入服务器配置
 
-### 🤖 **CC Agents**
-- **Custom AI Agents**: Create specialized agents with custom system prompts and behaviors
-- **Agent Library**: Build a collection of purpose-built agents for different tasks
-- **Background Execution**: Run agents in separate processes for non-blocking operations
-- **Execution History**: Track all agent runs with detailed logs and performance metrics
+### ⏰ 时间线与检查点
 
+- **会话版本控制** - 在会话的任何时刻创建检查点
+- **可视化时间线** - 用分支时间线浏览会话历史
+- **一键恢复** - 点击即跳转回任何检查点
+- **会话分叉** - 从现有检查点创建新分支
+- **差异查看器** - 查看检查点间的具体变化
 
+### 📝 CLAUDE.md 管理
 
-### 📊 **Usage Analytics Dashboard**
-- **Cost Tracking**: Monitor your Claude API usage and costs in real-time
-- **Token Analytics**: Detailed breakdown by model, project, and time period
-- **Visual Charts**: Beautiful charts showing usage trends and patterns
-- **Export Data**: Export usage data for accounting and analysis
+- **内置编辑器** - 直接在应用内编辑 CLAUDE.md 文件
+- **实时预览** - 实时查看 Markdown 渲染效果
+- **项目扫描器** - 查找项目中的所有 CLAUDE.md 文件
 
-### 🔌 **MCP Server Management**
-- **Server Registry**: Manage Model Context Protocol servers from a central UI
-- **Easy Configuration**: Add servers via UI or import from existing configs
-- **Connection Testing**: Verify server connectivity before use
-- **Claude Desktop Import**: Import server configurations from Claude Desktop
+---
 
-### ⏰ **Timeline & Checkpoints**
-- **Session Versioning**: Create checkpoints at any point in your coding session
-- **Visual Timeline**: Navigate through your session history with a branching timeline
-- **Instant Restore**: Jump back to any checkpoint with one click
-- **Fork Sessions**: Create new branches from existing checkpoints
-- **Diff Viewer**: See exactly what changed between checkpoints
+## 🚀 快速开始
 
-### 📝 **CLAUDE.md Management**
-- **Built-in Editor**: Edit CLAUDE.md files directly within the app
-- **Live Preview**: See your markdown rendered in real-time
-- **Project Scanner**: Find all CLAUDE.md files in your projects
-- **Syntax Highlighting**: Full markdown support with syntax highlighting
+### 系统要求
 
-## 📖 Usage
+- **操作系统**: Windows 10/11, macOS 11+, 或 Linux (Ubuntu 20.04+)
+- **内存**: 最低 4GB (推荐 8GB)
+- **存储**: 至少 1GB 可用空间
+- **Claude Code CLI**: 需要预先安装
 
-### Getting Started
+### 从源码构建
 
-1. **Launch opcode**: Open the application after installation
-2. **Welcome Screen**: Choose between CC Agents or Projects
-3. **First Time Setup**: opcode will automatically detect your `~/.claude` directory
+#### 1. 安装依赖
 
-### Managing Projects
-
-```
-Projects → Select Project → View Sessions → Resume or Start New
-```
-
-- Click on any project to view its sessions
-- Each session shows the first message and timestamp
-- Resume sessions directly or start new ones
-
-### Creating Agents
-
-```
-CC Agents → Create Agent → Configure → Execute
-```
-
-1. **Design Your Agent**: Set name, icon, and system prompt
-2. **Configure Model**: Choose between available Claude models
-3. **Set Permissions**: Configure file read/write and network access
-4. **Execute Tasks**: Run your agent on any project
-
-### Tracking Usage
-
-```
-Menu → Usage Dashboard → View Analytics
-```
-
-- Monitor costs by model, project, and date
-- Export data for reports
-- Set up usage alerts (coming soon)
-
-### Working with MCP Servers
-
-```
-Menu → MCP Manager → Add Server → Configure
-```
-
-- Add servers manually or via JSON
-- Import from Claude Desktop configuration
-- Test connections before using
-
-## 🚀 Installation
-
-### Prerequisites
-
-- **Claude Code CLI**: Install from [Claude's official site](https://claude.ai/code)
-
-### Release Executables Will Be Published Soon
-
-## 🔨 Build from Source
-
-### Prerequisites
-
-Before building opcode from source, ensure you have the following installed:
-
-#### System Requirements
-
-- **Operating System**: Windows 10/11, macOS 11+, or Linux (Ubuntu 20.04+)
-- **RAM**: Minimum 4GB (8GB recommended)
-- **Storage**: At least 1GB free space
-
-#### Required Tools
-
-1. **Rust** (1.70.0 or later)
-   ```bash
-   # Install via rustup
-   curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-   ```
-
-2. **Bun** (latest version)
-   ```bash
-   # Install bun
-   curl -fsSL https://bun.sh/install | bash
-   ```
-
-3. **Git**
-   ```bash
-   # Usually pre-installed, but if not:
-   # Ubuntu/Debian: sudo apt install git
-   # macOS: brew install git
-   # Windows: Download from https://git-scm.com
-   ```
-
-4. **Claude Code CLI**
-   - Download and install from [Claude's official site](https://claude.ai/code)
-   - Ensure `claude` is available in your PATH
-
-#### Platform-Specific Dependencies
-
-**Linux (Ubuntu/Debian)**
+**Rust** (1.70.0+)
 ```bash
-# Install system dependencies
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+**Node.js / Bun**
+```bash
+# 使用 Bun (推荐)
+curl -fsSL https://bun.sh/install | bash
+
+# 或使用 npm
+npm install
+```
+
+**Linux 额外依赖**
+```bash
 sudo apt update
 sudo apt install -y \
   libwebkit2gtk-4.1-dev \
@@ -214,9 +118,6 @@ sudo apt install -y \
   librsvg2-dev \
   patchelf \
   build-essential \
-  curl \
-  wget \
-  file \
   libssl-dev \
   libxdo-dev \
   libsoup-3.0-dev \
@@ -225,203 +126,164 @@ sudo apt install -y \
 
 **macOS**
 ```bash
-# Install Xcode Command Line Tools
 xcode-select --install
-
-# Install additional dependencies via Homebrew (optional)
-brew install pkg-config
 ```
 
-**Windows**
-- Install [Microsoft C++ Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
-- Install [WebView2](https://developer.microsoft.com/microsoft-edge/webview2/) (usually pre-installed on Windows 11)
-
-### Build Steps
-
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/getAsterisk/opcode.git
-   cd opcode
-   ```
-
-2. **Install Frontend Dependencies**
-   ```bash
-   bun install
-   ```
-
-3. **Build the Application**
-   
-   **For Development (with hot reload)**
-   ```bash
-   bun run tauri dev
-   ```
-   
-   **For Production Build**
-   ```bash
-   # Build the application
-   bun run tauri build
-   
-   # The built executable will be in:
-   # - Linux: src-tauri/target/release/
-   # - macOS: src-tauri/target/release/
-   # - Windows: src-tauri/target/release/
-   ```
-
-4. **Platform-Specific Build Options**
-   
-   **Debug Build (faster compilation, larger binary)**
-   ```bash
-   bun run tauri build --debug
-   ```
-   
-   **Universal Binary for macOS (Intel + Apple Silicon)**
-   ```bash
-   bun run tauri build --target universal-apple-darwin
-   ```
-
-### Troubleshooting
-
-#### Common Issues
-
-1. **"cargo not found" error**
-   - Ensure Rust is installed and `~/.cargo/bin` is in your PATH
-   - Run `source ~/.cargo/env` or restart your terminal
-
-2. **Linux: "webkit2gtk not found" error**
-   - Install the webkit2gtk development packages listed above
-   - On newer Ubuntu versions, you might need `libwebkit2gtk-4.0-dev`
-
-3. **Windows: "MSVC not found" error**
-   - Install Visual Studio Build Tools with C++ support
-   - Restart your terminal after installation
-
-4. **"claude command not found" error**
-   - Ensure Claude Code CLI is installed and in your PATH
-   - Test with `claude --version`
-
-5. **Build fails with "out of memory"**
-   - Try building with fewer parallel jobs: `cargo build -j 2`
-   - Close other applications to free up RAM
-
-#### Verify Your Build
-
-After building, you can verify the application works:
+#### 2. 克隆并构建
 
 ```bash
-# Run the built executable directly
-# Linux/macOS
-./src-tauri/target/release/opcode
+# 克隆仓库
+git clone https://github.com/hua123an/opcode.git
+cd opcode
 
-# Windows
-./src-tauri/target/release/opcode.exe
+# 安装前端依赖
+bun install
+# 或 npm install
+
+# 开发模式运行 (带热重载)
+bun run tauri dev
+
+# 生产构建
+bun run tauri build
 ```
 
-### Build Artifacts
+---
 
-The build process creates several artifacts:
+## 🛠️ 开发指南
 
-- **Executable**: The main opcode application
-- **Installers** (when using `tauri build`):
-  - `.deb` package (Linux)
-  - `.AppImage` (Linux)
-  - `.dmg` installer (macOS)
-  - `.msi` installer (Windows)
-  - `.exe` installer (Windows)
+### 技术栈
 
-All artifacts are located in `src-tauri/target/release/`.
+| 层级 | 技术 |
+|------|------|
+| **前端** | React 18 + TypeScript + Vite 6 |
+| **后端** | Rust + Tauri 2 |
+| **UI** | Tailwind CSS v4 + shadcn/ui |
+| **数据库** | SQLite (rusqlite) |
+| **虚拟化** | @tanstack/react-virtual |
 
-## 🛠️ Development
-
-### Tech Stack
-
-- **Frontend**: React 18 + TypeScript + Vite 6
-- **Backend**: Rust with Tauri 2
-- **UI Framework**: Tailwind CSS v4 + shadcn/ui
-- **Database**: SQLite (via rusqlite)
-- **Package Manager**: Bun
-
-### Project Structure
+### 项目结构
 
 ```
 opcode/
-├── src/                   # React frontend
-│   ├── components/        # UI components
-│   ├── lib/               # API client & utilities
-│   └── assets/            # Static assets
-├── src-tauri/             # Rust backend
+├── src/                    # React 前端源码
+│   ├── components/         # UI 组件
+│   │   ├── ClaudeCodeSession.tsx  # 主会话组件
+│   │   ├── StreamMessage.tsx      # 消息渲染组件
+│   │   └── ...
+│   ├── lib/                # API 客户端与工具函数
+│   ├── hooks/              # React Hooks
+│   ├── contexts/           # React Context
+│   └── services/           # 持久化服务
+├── src-tauri/              # Rust 后端源码
 │   ├── src/
-│   │   ├── commands/      # Tauri command handlers
-│   │   ├── checkpoint/    # Timeline management
-│   │   └── process/       # Process management
-│   └── tests/             # Rust test suite
-└── public/                # Public assets
+│   │   ├── commands/       # Tauri 命令处理器
+│   │   ├── checkpoint/     # 时间线管理
+│   │   └── process/        # 进程管理
+│   └── tauri.conf.json     # Tauri 配置
+└── public/                 # 公共资源
 ```
 
-### Development Commands
+### 开发命令
 
 ```bash
-# Start development server
+# 启动开发服务器 (前端 + 后端)
 bun run tauri dev
 
-# Run frontend only
+# 仅运行前端
 bun run dev
 
-# Type checking
+# 类型检查
 bunx tsc --noEmit
 
-# Run Rust tests
+# 构建生产版本
+bun run tauri build
+
+# 运行 Rust 测试
 cd src-tauri && cargo test
 
-# Format code
+# 格式化代码
 cd src-tauri && cargo fmt
 ```
 
-## 🔒 Security
+---
 
-opcode prioritizes your privacy and security:
+## � 性能优化
 
-1. **Process Isolation**: Agents run in separate processes
-2. **Permission Control**: Configure file and network access per agent
-3. **Local Storage**: All data stays on your machine
-4. **No Telemetry**: No data collection or tracking
-5. **Open Source**: Full transparency through open source code
+本项目采用了多项性能优化措施：
 
-## 🤝 Contributing
+### 虚拟化列表
+- 使用 `@tanstack/react-virtual` 实现消息列表虚拟化
+- 只渲染可视区域内的消息 + 少量缓冲
+- 支持动态高度测量
 
-We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+### 组件优化
+- 使用 `React.memo` 避免不必要的重渲染
+- 使用 `useMemo` 缓存计算结果
+- 移除生产环境的调试日志
 
-### Areas for Contribution
+### 事件处理
+- 使用 Tauri 事件系统实现高效的进程间通信
+- 正确清理事件监听器，防止内存泄漏
 
-- 🐛 Bug fixes and improvements
-- ✨ New features and enhancements
-- 📚 Documentation improvements
-- 🎨 UI/UX enhancements
-- 🧪 Test coverage
-- 🌐 Internationalization
+---
 
-## 📄 License
+## 🔒 安全性
 
-This project is licensed under the AGPL License - see the [LICENSE](LICENSE) file for details.
+Opcode 优先考虑您的隐私和安全：
 
-## 🙏 Acknowledgments
+- ✅ **进程隔离** - 代理在独立进程中运行
+- ✅ **权限控制** - 可配置每个代理的文件和网络访问权限
+- ✅ **本地存储** - 所有数据保存在本地
+- ✅ **无遥测** - 不收集任何用户数据
+- ✅ **开源透明** - 完整代码开源可审计
 
-- Built with [Tauri](https://tauri.app/) - The secure framework for building desktop apps
-- [Claude](https://claude.ai) by Anthropic
+---
+
+## 🤝 贡献指南
+
+欢迎贡献！您可以通过以下方式参与：
+
+- 🐛 **Bug 修复** - 修复已知问题
+- ✨ **新功能** - 实现新特性
+- 📚 **文档** - 改进文档
+- 🎨 **UI/UX** - 优化用户界面
+- 🧪 **测试** - 增加测试覆盖率
+- 🌐 **国际化** - 添加多语言支持
+
+### 提交流程
+
+1. Fork 本仓库
+2. 创建功能分支 (`git checkout -b feature/amazing-feature`)
+3. 提交更改 (`git commit -m 'Add some amazing feature'`)
+4. 推送到分支 (`git push origin feature/amazing-feature`)
+5. 创建 Pull Request
+
+---
+
+## 📄 许可证
+
+本项目采用 AGPL 许可证 - 详见 [LICENSE](LICENSE) 文件。
+
+---
+
+## 🙏 致谢
+
+- [Tauri](https://tauri.app/) - 安全的桌面应用框架
+- [Claude](https://claude.ai) by Anthropic - 强大的 AI 助手
+- [React](https://react.dev/) - 用户界面库
+- [TanStack Virtual](https://tanstack.com/virtual) - 虚拟化列表
 
 ---
 
 <div align="center">
   <p>
-    <strong>Made with ❤️ by the <a href="https://asterisk.so/">Asterisk</a></strong>
+    <strong>Made with ❤️</strong>
   </p>
   <p>
-    <a href="https://github.com/getAsterisk/opcode/issues">Report Bug</a>
+    <a href="https://github.com/hua123an/opcode/issues">报告 Bug</a>
     ·
-    <a href="https://github.com/getAsterisk/opcode/issues">Request Feature</a>
+    <a href="https://github.com/hua123an/opcode/issues">功能建议</a>
   </p>
 </div>
 
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=getAsterisk/opcode&type=Date)](https://www.star-history.com/#getAsterisk/opcode&Date)
+> **注意**: 本项目不隶属于 Anthropic，也不受其认可或赞助。Claude 是 Anthropic, PBC 的商标。这是一个独立的开发者项目。

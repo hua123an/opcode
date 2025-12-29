@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Popover } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
-import { TooltipProvider, TooltipSimple, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip-modern";
+import { TooltipProvider, TooltipSimple } from "@/components/ui/tooltip-modern";
 import { FilePicker } from "./FilePicker";
 import { SlashCommandPicker } from "./SlashCommandPicker";
 import { ImagePreview } from "./ImagePreview";
@@ -889,207 +889,93 @@ const FloatingPromptInputInner = (
   return (
     <TooltipProvider>
       <>
-        {/* Expanded Modal */}
+        {/* Expanded View Modal Overlay */}
         <AnimatePresence>
           {isExpanded && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm"
+              className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm"
               onClick={() => setIsExpanded(false)}
             >
               <motion.div
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -8 }}
-                transition={{ duration: 0.15 }}
-                className="bg-background border border-border rounded-lg shadow-lg w-full max-w-2xl p-4 space-y-4"
+                initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                className="w-full max-w-4xl h-[60vh] flex flex-col glass-card rounded-2xl overflow-hidden shadow-2xl relative"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-medium">Compose your prompt</h3>
-                  <TooltipSimple content="Minimize" side="bottom">
-                    <motion.div
-                      whileTap={{ scale: 0.97 }}
-                      transition={{ duration: 0.15 }}
-                    >
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => setIsExpanded(false)}
-                        className="h-8 w-8"
-                      >
-                        <Minimize2 className="h-4 w-4" />
-                      </Button>
-                    </motion.div>
-                  </TooltipSimple>
+                <div className="flex items-center justify-between p-4 border-b">
+                  <span className="text-sm font-medium flex items-center gap-2">
+                    <Maximize2 className="h-4 w-4" />
+                    Expanded Message
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setIsExpanded(false)}
+                    className="h-8 w-8 rounded-full"
+                  >
+                    <Minimize2 className="h-4 w-4" />
+                  </Button>
                 </div>
 
                 {/* Image previews in expanded mode */}
                 {(embeddedImages.length > 0 || attachments.length > 0) && (
-                  <ImagePreview
-                    images={[...embeddedImages, ...attachments.map(a => a.preview || a.path)]}
-                    onRemove={handleRemoveImage}
-                    className="border-t border-border pt-2"
-                  />
+                  <div className="px-6 pt-4">
+                    <ImagePreview
+                      images={[...embeddedImages, ...attachments.map(a => a.preview || a.path)]}
+                      onRemove={handleRemoveImage}
+                      className="border border-border/40 bg-card/40 backdrop-blur-md rounded-xl p-2"
+                    />
+                  </div>
                 )}
 
-                <Textarea
-                  ref={expandedTextareaRef}
-                  value={prompt}
-                  onChange={handleTextChange}
-                  onCompositionStart={handleCompositionStart}
-                  onCompositionEnd={handleCompositionEnd}
-                  onPaste={handlePaste}
-                  placeholder="Type your message..."
-                  className="min-h-[200px] resize-none"
-                  disabled={disabled}
-                  onDragEnter={handleDrag}
-                  onDragLeave={handleDrag}
-                  onDragOver={handleDrag}
-                  onDrop={handleDrop}
-                />
+                <div className="flex-1 overflow-hidden relative">
+                  <Textarea
+                    ref={expandedTextareaRef}
+                    value={prompt}
+                    onChange={handleTextChange}
+                    onKeyDown={handleKeyDown}
+                    onCompositionStart={handleCompositionStart}
+                    onCompositionEnd={handleCompositionEnd}
+                    onPaste={handlePaste}
+                    placeholder="Type your message..."
+                    className="h-full w-full resize-none p-6 bg-transparent border-none focus-visible:ring-0 text-lg leading-relaxed placeholder:text-muted-foreground/30"
+                  />
+                </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-muted-foreground">Model:</span>
-                      <Popover
-                        trigger={
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setModelPickerOpen(!modelPickerOpen)}
-                            className="gap-2"
-                          >
-                            <span className={selectedModelMeta.color}>
-                              {selectedModelMeta.icon}
-                            </span>
-                            {selectedModelData.display_name}
-                          </Button>
-                        }
-                        content={
-                          <div className="w-[300px] p-1 max-h-[300px] overflow-y-auto">
-                            {availableModels.map((model) => {
-                              const meta = getModelMetadata(model.id);
-                              return (
-                                <button
-                                  key={model.id}
-                                  onClick={() => {
-                                    setSelectedModel(model.id);
-                                    setModelPickerOpen(false);
-                                  }}
-                                  className={cn(
-                                    "w-full flex items-start gap-3 p-3 rounded-md transition-colors text-left",
-                                    "hover:bg-accent",
-                                    selectedModel === model.id && "bg-accent"
-                                  )}
-                                >
-                                  <div className="mt-0.5">
-                                    <span className={meta.color}>
-                                      {meta.icon}
-                                    </span>
-                                  </div>
-                                  <div className="flex-1 space-y-1">
-                                    <div className="font-medium text-sm">{model.display_name}</div>
-                                    <div className="text-xs text-muted-foreground">
-                                      {model.id}
-                                    </div>
-                                  </div>
-                                </button>
-                              );
-                            })}
-                          </div>
-                        }
-                        open={modelPickerOpen}
-                        onOpenChange={setModelPickerOpen}
-                        align="start"
-                        side="top"
-                      />
+                <div className="p-4 border-t flex justify-end gap-2 bg-muted/20">
+                  <TooltipSimple content="Press Esc to close" side="top">
+                    <div className="text-[10px] text-muted-foreground self-center mr-4 uppercase tracking-widest font-bold">
+                      ESC TO CLOSE
                     </div>
-
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-muted-foreground">Thinking:</span>
-                      <Popover
-                        trigger={
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => setThinkingModePickerOpen(!thinkingModePickerOpen)}
-                                className="gap-2"
-                              >
-                                <span className={THINKING_MODES.find(m => m.id === selectedThinkingMode)?.color}>
-                                  {THINKING_MODES.find(m => m.id === selectedThinkingMode)?.icon}
-                                </span>
-                                <ThinkingModeIndicator
-                                  level={THINKING_MODES.find(m => m.id === selectedThinkingMode)?.level || 0}
-                                />
-                              </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p className="font-medium">{THINKING_MODES.find(m => m.id === selectedThinkingMode)?.name || "Auto"}</p>
-                              <p className="text-xs text-muted-foreground">{THINKING_MODES.find(m => m.id === selectedThinkingMode)?.description}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        }
-                        content={
-                          <div className="w-[280px] p-1">
-                            {THINKING_MODES.map((mode) => (
-                              <button
-                                key={mode.id}
-                                onClick={() => {
-                                  setSelectedThinkingMode(mode.id);
-                                  setThinkingModePickerOpen(false);
-                                }}
-                                className={cn(
-                                  "w-full flex items-start gap-3 p-3 rounded-md transition-colors text-left",
-                                  "hover:bg-accent",
-                                  selectedThinkingMode === mode.id && "bg-accent"
-                                )}
-                              >
-                                <span className={cn("mt-0.5", mode.color)}>
-                                  {mode.icon}
-                                </span>
-                                <div className="flex-1 space-y-1">
-                                  <div className="font-medium text-sm">
-                                    {mode.name}
-                                  </div>
-                                  <div className="text-xs text-muted-foreground">
-                                    {mode.description}
-                                  </div>
-                                </div>
-                                <ThinkingModeIndicator level={mode.level} />
-                              </button>
-                            ))}
-                          </div>
-                        }
-                        open={thinkingModePickerOpen}
-                        onOpenChange={setThinkingModePickerOpen}
-                        align="start"
-                        side="top"
-                      />
-                    </div>
-                  </div>
-
+                  </TooltipSimple>
+                  <Button
+                    variant="ghost"
+                    onClick={() => setIsExpanded(false)}
+                    className="rounded-xl px-4"
+                  >
+                    Cancel
+                  </Button>
                   <TooltipSimple content="Send message" side="top">
-                    <motion.div
-                      whileTap={{ scale: 0.97 }}
-                      transition={{ duration: 0.15 }}
-                    >
+                    <motion.div whileTap={{ scale: 0.95 }}>
                       <Button
-                        onClick={handleSend}
-                        disabled={!prompt.trim() || disabled}
-                        size="default"
-                        className="min-w-[60px]"
+                        onClick={() => {
+                          handleSend();
+                          setIsExpanded(false);
+                        }}
+                        disabled={isLoading || !prompt.trim() || disabled}
+                        variant="default"
+                        className="rounded-xl px-6 gap-2 shadow-lg"
                       >
                         {isLoading ? (
-                          <div className="rotating-symbol text-primary-foreground" />
+                          <Square className="h-4 w-4 fill-current" />
                         ) : (
                           <Send className="h-4 w-4" />
                         )}
+                        Send Message
                       </Button>
                     </motion.div>
                   </TooltipSimple>
@@ -1099,7 +985,6 @@ const FloatingPromptInputInner = (
           )}
         </AnimatePresence>
 
-        {/* Fixed Position Input Bar */}
         {/* Fixed Position Input Bar */}
         <div
           className={cn(
@@ -1126,7 +1011,7 @@ const FloatingPromptInputInner = (
                   <ImagePreview
                     images={[...embeddedImages, ...attachments.map(a => a.preview || a.path)]}
                     onRemove={handleRemoveImage}
-                    className="rounded-xl border border-border/40 bg-card/40 backdrop-blur-md shadow-lg overflow-hidden"
+                    className="rounded-xl border border-border/40 bg-card/60 backdrop-blur-md shadow-lg overflow-hidden"
                   />
                 </motion.div>
               )}
@@ -1134,29 +1019,29 @@ const FloatingPromptInputInner = (
 
             <div
               className={cn(
-                "relative group rounded-2xl border border-border/50 shadow-2xl overflow-hidden transition-all duration-300",
-                "bg-card/40 backdrop-blur-xl"
+                "relative group rounded-2xl border border-border/80 shadow-2xl overflow-hidden transition-all duration-300",
+                "backdrop-blur-xl"
               )}
+              style={{
+                backgroundColor: 'color-mix(in srgb, var(--color-card), transparent 10%)'
+              }}
             >
-              {/* Top border highlight for glass effect */}
-              <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border/50 to-transparent opacity-50" />
-
               <div className="flex flex-col">
                 {/* Input Area */}
-                <div className="flex items-start gap-2 p-3">
-                  {/* Model & Thinking Mode Selectors - Integrated into the top-left of the input box */}
-                  <div className="flex flex-col gap-1 shrink-0 pt-1">
+                <div className="flex items-start gap-3 p-4">
+                  {/* Model & Thinking Mode Selectors */}
+                  <div className="flex flex-col gap-2 shrink-0 pt-1">
                     <Popover
                       trigger={
                         <TooltipSimple content="Select Model" side="top">
-                          <motion.div whileTap={{ scale: 0.97 }}>
+                          <motion.div whileTap={{ scale: 0.95 }}>
                             <Button
-                              variant="ghost"
+                              variant="secondary"
                               size="sm"
                               disabled={disabled}
-                              className="h-8 w-8 p-0 hover:bg-muted/50 rounded-lg flex items-center justify-center border border-transparent hover:border-border/40"
+                              className="h-9 w-9 p-0 rounded-xl flex items-center justify-center border shadow-sm"
                             >
-                              <span className={cn("text-base", selectedModelMeta.color)}>
+                              <span className={cn("text-lg", selectedModelMeta.color)}>
                                 {selectedModelMeta.icon}
                               </span>
                             </Button>
@@ -1205,14 +1090,14 @@ const FloatingPromptInputInner = (
                     <Popover
                       trigger={
                         <TooltipSimple content={`Thinking: ${selectedThinkingMode}`} side="top">
-                          <motion.div whileTap={{ scale: 0.97 }}>
+                          <motion.div whileTap={{ scale: 0.95 }}>
                             <Button
-                              variant="ghost"
+                              variant="secondary"
                               size="sm"
                               disabled={disabled}
-                              className="h-8 w-8 p-0 hover:bg-muted/50 rounded-lg flex items-center justify-center border border-transparent hover:border-border/40"
+                              className="h-9 w-9 p-0 rounded-xl flex items-center justify-center border shadow-sm"
                             >
-                              <span className={cn("text-base", THINKING_MODES.find(m => m.id === selectedThinkingMode)?.color)}>
+                              <span className={cn("text-lg", THINKING_MODES.find(m => m.id === selectedThinkingMode)?.color)}>
                                 {THINKING_MODES.find(m => m.id === selectedThinkingMode)?.icon}
                               </span>
                             </Button>
@@ -1258,7 +1143,7 @@ const FloatingPromptInputInner = (
                   </div>
 
                   {/* Textarea Area */}
-                  <div className="flex-1 relative">
+                  <div className="flex-1 relative pt-1">
                     <Textarea
                       ref={textareaRef}
                       value={prompt}
@@ -1274,46 +1159,45 @@ const FloatingPromptInputInner = (
                       }
                       disabled={disabled}
                       className={cn(
-                        "resize-none pl-1 pr-12 py-1.5 min-h-[40px] transition-all duration-200",
-                        "bg-transparent border-transparent shadow-none focus-visible:ring-0 md:text-sm text-base",
-                        "placeholder:text-muted-foreground/40",
+                        "resize-none pl-1 pr-12 py-1.5 min-h-[44px] transition-all duration-200",
+                        "bg-transparent border-none shadow-none focus-visible:ring-0 md:text-sm text-base",
+                        "placeholder:text-muted-foreground/50",
                         dragActive && "text-primary",
                         textareaHeight >= 240 && "overflow-y-auto scrollbar-thin"
                       )}
                       style={{
-                        height: `${Math.max(textareaHeight - 20, 40)}px`,
+                        height: `${Math.max(textareaHeight - 20, 44)}px`,
                         overflowY: textareaHeight >= 240 ? 'auto' : 'hidden'
                       }}
                     />
                   </div>
 
                   {/* Right Actions */}
-                  <div className="flex items-center gap-1 shrink-0 pt-0.5">
-                    <TooltipSimple content="Expand (Ctrl+Shift+E)" side="top">
-                      <motion.div whileTap={{ scale: 0.97 }}>
+                  <div className="flex flex-col gap-2 shrink-0 pt-1">
+                    <TooltipSimple content="Expand" side="top">
+                      <motion.div whileTap={{ scale: 0.95 }}>
                         <Button
                           variant="ghost"
                           size="icon"
                           onClick={() => setIsExpanded(true)}
                           disabled={disabled}
-                          className="h-8 w-8 text-muted-foreground/60 hover:text-foreground hover:bg-muted/50 rounded-lg"
+                          className="h-9 w-9 text-muted-foreground hover:text-foreground hover:bg-muted/50 rounded-xl"
                         >
                           <Maximize2 className="h-4 w-4" />
                         </Button>
                       </motion.div>
                     </TooltipSimple>
 
-                    <TooltipSimple content={isLoading ? "Stop" : "Send (Enter)"} side="top">
-                      <motion.div whileTap={{ scale: 0.97 }}>
+                    <TooltipSimple content={isLoading ? "Stop" : "Send"} side="top">
+                      <motion.div whileTap={{ scale: 0.95 }}>
                         <Button
                           onClick={isLoading ? onCancel : handleSend}
                           disabled={isLoading ? false : (!prompt.trim() || disabled)}
-                          variant={isLoading ? "destructive" : prompt.trim() ? "default" : "ghost"}
+                          variant={isLoading ? "destructive" : prompt.trim() ? "default" : "secondary"}
                           size="icon"
                           className={cn(
-                            "h-8 w-8 transition-all duration-300 rounded-lg",
-                            prompt.trim() && !isLoading ? "bg-primary text-primary-foreground shadow-md hover:shadow-lg" : "text-muted-foreground/40 hover:bg-muted/50",
-                            isLoading && "bg-destructive text-destructive-foreground"
+                            "h-9 w-9 transition-all duration-300 rounded-xl shadow-sm",
+                            prompt.trim() && !isLoading ? "bg-primary text-primary-foreground shadow-primary/20" : "text-muted-foreground/60"
                           )}
                         >
                           {isLoading ? (
@@ -1327,15 +1211,19 @@ const FloatingPromptInputInner = (
                   </div>
                 </div>
 
-                {/* Bottom Toolbar - Only visible when extraMenuItems are present or model metadata needs to be shown */}
-                <div className="flex items-center justify-between px-3 pb-2 border-t border-border/10 bg-muted/5">
-                  <div className="flex items-center gap-3">
-                    <span className="text-[10px] font-medium text-muted-foreground/60 uppercase tracking-wider">
+                {/* Bottom Toolbar */}
+                <div
+                  className="flex items-center justify-between px-4 py-2 border-t"
+                  style={{ backgroundColor: 'color-mix(in srgb, var(--color-muted), transparent 90%)' }}
+                >
+                  <div className="flex items-center gap-2">
+                    <div className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse" />
+                    <span className="text-[10px] font-bold text-muted-foreground tracking-widest uppercase opacity-70">
                       {selectedModelMeta.shortName} • {selectedThinkingMode !== 'auto' ? `THINKING: ${selectedThinkingMode.replace('_', ' ')}` : 'THINKING: AUTO'}
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-0.5">
+                  <div className="flex items-center gap-1">
                     {extraMenuItems}
                   </div>
                 </div>

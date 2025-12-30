@@ -207,7 +207,6 @@ const FloatingPromptInputInner = (
     onCancel,
     extraMenuItems,
     isFixed = true,
-    onSlashCommandSelect
   }: FloatingPromptInputProps,
   ref: React.Ref<FloatingPromptInputRef>,
 ) => {

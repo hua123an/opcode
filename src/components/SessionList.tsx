@@ -123,7 +123,7 @@ export const SessionList: React.FC<SessionListProps> = ({
                         <div className="flex items-center gap-2 flex-1 min-w-0">
                           <div className={cn(
                             "p-1.5 rounded-md shrink-0 transition-colors",
-                            session.todo_data ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"
+                            session.todo_data ? "bg-primary/20 text-primary" : "bg-secondary text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"
                           )}>
                             <Clock className="h-3.5 w-3.5" />
                           </div>
@@ -188,7 +188,7 @@ export const SessionList: React.FC<SessionListProps> = ({
           totalPages={totalPages}
           onPageChange={setCurrentPage}
         />
-      </div>
-    </TooltipProvider>
+      </div >
+    </TooltipProvider >
   );
 }; 

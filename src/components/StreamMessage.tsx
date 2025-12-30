@@ -382,7 +382,10 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
                         </span>
                       </div>
                       {content.input && (
-                        <div className="ml-6 p-2 bg-muted/30 rounded-md border border-border/50">
+                        <div className={cn(
+                          "ml-6 p-2 rounded-md border border-border/50",
+                          (theme === 'dark' || theme === 'gray') ? "bg-muted/30" : "bg-secondary/30"
+                        )}>
                           <pre className="text-xs font-mono overflow-x-auto text-muted-foreground">
                             {JSON.stringify(content.input, null, 2)}
                           </pre>
@@ -442,7 +445,8 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
 
       const renderedCard = (
         <div className={cn(
-          "group relative py-3 px-3 rounded-lg bg-muted/30",
+          "group relative py-3 px-3 rounded-lg border transition-colors",
+          (theme === 'dark' || theme === 'gray') ? "bg-muted/30 border-transparent" : "bg-secondary/30 border-border/50",
           className
         )}>
           <div className="flex items-start gap-4">
@@ -536,7 +540,10 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
                         </div>
 
                         {beforeReminder && (
-                          <div className="ml-6 p-2 bg-muted/30 rounded-md border border-border/40">
+                          <div className={cn(
+                            "ml-6 p-2 rounded-md border border-border/40",
+                            (theme === 'dark' || theme === 'gray') ? "bg-muted/30" : "bg-secondary/30"
+                          )}>
                             <pre className="text-xs font-mono overflow-x-auto whitespace-pre-wrap text-muted-foreground">
                               {beforeReminder}
                             </pre>
@@ -548,7 +555,10 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
                         </div>
 
                         {afterReminder && (
-                          <div className="ml-6 p-2 bg-muted/30 rounded-md border border-border/40">
+                          <div className={cn(
+                            "ml-6 p-2 rounded-md border border-border/40",
+                            (theme === 'dark' || theme === 'gray') ? "bg-muted/30" : "bg-secondary/30"
+                          )}>
                             <pre className="text-xs font-mono overflow-x-auto whitespace-pre-wrap text-muted-foreground">
                               {afterReminder}
                             </pre>
@@ -689,7 +699,10 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
                         <CheckCircle2 className="h-4 w-4 text-green-500" />
                         <span className="text-sm font-medium">Tool Output</span>
                       </div>
-                      <div className="ml-6 p-2 bg-muted/30 rounded border border-border/30">
+                      <div className={cn(
+                        "ml-6 p-2 rounded border border-border/30",
+                        (theme === 'dark' || theme === 'gray') ? "bg-muted/30" : "bg-secondary/30"
+                      )}>
                         <pre className="text-xs font-mono overflow-x-auto whitespace-pre-wrap text-muted-foreground">
                           {contentText}
                         </pre>

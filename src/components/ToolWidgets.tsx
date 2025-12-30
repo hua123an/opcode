@@ -634,7 +634,10 @@ export const ReadResultWidget: React.FC<{ content: string; filePath?: string }> 
       )}
 
       {isLargeFile && !isExpanded && (
-        <div className="px-4 py-3 text-xs text-muted-foreground text-center bg-muted/30">
+        <div className={cn(
+          "px-4 py-3 text-xs text-muted-foreground text-center transition-colors",
+          (theme === 'dark' || theme === 'gray') ? "bg-muted/30" : "bg-secondary/30"
+        )}>
           Click "Expand" to view the full file
         </div>
       )}

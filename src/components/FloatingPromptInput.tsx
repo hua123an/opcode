@@ -21,6 +21,7 @@ import { FilePicker } from "./FilePicker";
 import { SlashCommandPicker } from "./SlashCommandPicker";
 import { ImagePreview } from "./ImagePreview";
 import { type FileEntry, type SlashCommand, api, type ModelInfo } from "@/lib/api";
+import { useTheme } from "@/hooks";
 
 // Conditional import for Tauri webview window
 let tauriGetCurrentWebviewWindow: any;
@@ -206,9 +207,11 @@ const FloatingPromptInputInner = (
     onCancel,
     extraMenuItems,
     isFixed = true,
+    onSlashCommandSelect
   }: FloatingPromptInputProps,
   ref: React.Ref<FloatingPromptInputRef>,
 ) => {
+  const { theme } = useTheme();
   const [prompt, setPrompt] = useState("");
   const [selectedModel, setSelectedModel] = useState<string>(() => {
     if (typeof window !== 'undefined') {
@@ -1031,7 +1034,10 @@ const FloatingPromptInputInner = (
                   <ImagePreview
                     images={[...embeddedImages, ...attachments.map(a => a.preview || a.path)]}
                     onRemove={handleRemoveImage}
-                    className="rounded-xl border border-border/40 bg-card/60 backdrop-blur-md shadow-lg overflow-hidden"
+                    className={cn(
+                      "rounded-xl border border-border/40 backdrop-blur-md shadow-lg overflow-hidden",
+                      (theme === 'dark' || theme === 'gray') ? "bg-card/60" : "bg-[#f4f4f5]/90 border-black/5"
+                    )}
                   />
                 </motion.div>
               )}

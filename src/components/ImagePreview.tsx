@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from "framer-motion";
 import { convertFileSrc } from "@tauri-apps/api/core";
+import { useTheme } from "@/hooks";
 
 interface ImagePreviewProps {
   /**
@@ -40,6 +41,7 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
   onRemove,
   className,
 }) => {
+  const { theme } = useTheme();
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const [imageErrors, setImageErrors] = useState<Set<number>>(new Set());
@@ -88,7 +90,10 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
                 onClick={() => setSelectedImageIndex(index)}
               >
                 {imageErrors.has(index) ? (
-                  <div className="w-full h-full bg-muted flex items-center justify-center">
+                  <div className={cn(
+                    "w-full h-full flex items-center justify-center",
+                    (theme === 'dark' || theme === 'gray') ? "bg-muted" : "bg-[#f4f4f5]"
+                  )}>
                     <span className="text-xs text-muted-foreground">Error</span>
                   </div>
                 ) : (
@@ -99,7 +104,7 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
                     onError={() => handleImageError(index)}
                   />
                 )}
-                
+
                 {/* Hover overlay with maximize icon */}
                 <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                   <Maximize2 className="h-4 w-4 text-white" />
@@ -125,15 +130,18 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
         </AnimatePresence>
 
         {images.length > 10 && (
-          <div className="flex-shrink-0 w-16 h-16 rounded-md border border-border bg-muted flex items-center justify-center">
+          <div className={cn(
+            "flex-shrink-0 w-16 h-16 rounded-md border border-border flex items-center justify-center",
+            (theme === 'dark' || theme === 'gray') ? "bg-muted" : "bg-[#f4f4f5]"
+          )}>
             <span className="text-xs text-muted-foreground">+{images.length - 10}</span>
           </div>
         )}
       </div>
 
       {/* Full-size preview dialog */}
-      <Dialog 
-        open={selectedImageIndex !== null} 
+      <Dialog
+        open={selectedImageIndex !== null}
         onOpenChange={(open) => !open && setSelectedImageIndex(null)}
       >
         <DialogContent className="max-w-4xl max-h-[90vh] p-0">
@@ -146,13 +154,13 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
                 className="max-w-full max-h-full object-contain"
                 onError={() => handleImageError(selectedImageIndex)}
               />
-              
+
               {/* Navigation buttons if multiple images */}
               {displayImages.length > 1 && (
                 <>
                   <button
                     className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 text-white rounded-full flex items-center justify-center hover:bg-black/70 transition-colors"
-                    onClick={() => setSelectedImageIndex((prev) => 
+                    onClick={() => setSelectedImageIndex((prev) =>
                       prev !== null ? (prev - 1 + displayImages.length) % displayImages.length : 0
                     )}
                   >
@@ -160,7 +168,7 @@ export const ImagePreview: React.FC<ImagePreviewProps> = ({
                   </button>
                   <button
                     className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 text-white rounded-full flex items-center justify-center hover:bg-black/70 transition-colors"
-                    onClick={() => setSelectedImageIndex((prev) => 
+                    onClick={() => setSelectedImageIndex((prev) =>
                       prev !== null ? (prev + 1) % displayImages.length : 0
                     )}
                   >

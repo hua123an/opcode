@@ -37,17 +37,17 @@ export const getClaudeSyntaxTheme = (theme: ThemeMode): any => {
       operator: '#a1a1aa',
     },
     light: {
-      base: '#1f2937',
+      base: '#24292e',
       background: 'transparent',
-      comment: '#9ca3af',
-      punctuation: '#6b7280',
-      property: '#dc2626', // Red
-      tag: '#7c3aed', // Purple
-      string: '#059669', // Green
-      function: '#2563eb', // Blue
-      keyword: '#9333ea', // Purple
-      variable: '#8b5cf6', // Violet
-      operator: '#6b7280',
+      comment: '#6a737d',
+      punctuation: '#24292e',
+      property: '#e36209', // Orange
+      tag: '#6f42c1', // Purple
+      string: '#22863a', // Green
+      function: '#005cc5', // Blue
+      keyword: '#d73a49', // Red/Pink
+      variable: '#6f42c1', // Purple
+      operator: '#24292e',
     },
     white: {
       base: '#000000',

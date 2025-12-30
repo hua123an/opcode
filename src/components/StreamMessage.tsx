@@ -207,15 +207,22 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
                                 language={match[1]}
                                 PreTag="div"
                                 className={cn(
-                                  "rounded-xl !mt-4 !mb-4 border border-border/30 transition-all shadow-sm overflow-hidden",
-                                  (theme === 'dark' || theme === 'gray') ? "!bg-muted/20" : "!bg-muted/40"
+                                  "rounded-lg !mt-4 !mb-4 border transition-all overflow-hidden",
+                                  (theme === 'dark' || theme === 'gray')
+                                    ? "!bg-[#1e1e2e] border-white/10"
+                                    : "!bg-[#f5f5f5] border-black/10"
                                 )}
+                                customStyle={{
+                                  padding: '1rem',
+                                  fontSize: '0.875rem',
+                                  lineHeight: '1.6',
+                                }}
                                 {...props}
                               >
                                 {String(children).replace(/\n$/, '')}
                               </SyntaxHighlighter>
                             ) : (
-                              <code className="bg-primary/10 px-1.5 py-0.5 rounded-md text-primary font-mono text-[0.85em] font-medium border border-primary/10" {...props}>
+                              <code className="bg-primary/15 px-1.5 py-0.5 rounded text-primary font-mono text-[0.9em] font-medium" {...props}>
                                 {children}
                               </code>
                             );

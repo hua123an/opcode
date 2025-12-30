@@ -384,7 +384,7 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
                       {content.input && (
                         <div className={cn(
                           "ml-6 p-2 rounded-md border border-border/50",
-                          (theme === 'dark' || theme === 'gray') ? "bg-muted/30" : "bg-secondary/30"
+                          (theme === 'dark' || theme === 'gray') ? "bg-muted/30" : "bg-[#f4f4f5]"
                         )}>
                           <pre className="text-xs font-mono overflow-x-auto text-muted-foreground">
                             {JSON.stringify(content.input, null, 2)}
@@ -446,7 +446,7 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
       const renderedCard = (
         <div className={cn(
           "group relative py-3 px-3 rounded-lg border transition-colors",
-          (theme === 'dark' || theme === 'gray') ? "bg-muted/30 border-transparent" : "bg-secondary/30 border-border/50",
+          (theme === 'dark' || theme === 'gray') ? "bg-muted/30 border-transparent" : "bg-[#f4f4f5] border-border/50",
           className
         )}>
           <div className="flex items-start gap-4">
@@ -506,6 +506,23 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
                   );
                 }
 
+                // Image content
+                if (content.type === "image") {
+                  const source = content.source;
+                  if (source && source.type === "base64") {
+                    renderedSomething = true;
+                    return (
+                      <div key={idx} className="my-2">
+                        <img
+                          src={`data:${source.media_type};base64,${source.data}`}
+                          alt="User uploaded"
+                          className="max-w-full rounded-lg max-h-[300px] object-contain border border-border/50"
+                        />
+                      </div>
+                    );
+                  }
+                }
+
                 // Tool result (User role can contain tool results in some API versions/contexts)
                 if (content.type === "tool_result") {
                   // Extract content logic...
@@ -542,7 +559,7 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
                         {beforeReminder && (
                           <div className={cn(
                             "ml-6 p-2 rounded-md border border-border/40",
-                            (theme === 'dark' || theme === 'gray') ? "bg-muted/30" : "bg-secondary/30"
+                            (theme === 'dark' || theme === 'gray') ? "bg-muted/30" : "bg-[#f4f4f5]"
                           )}>
                             <pre className="text-xs font-mono overflow-x-auto whitespace-pre-wrap text-muted-foreground">
                               {beforeReminder}
@@ -557,7 +574,7 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
                         {afterReminder && (
                           <div className={cn(
                             "ml-6 p-2 rounded-md border border-border/40",
-                            (theme === 'dark' || theme === 'gray') ? "bg-muted/30" : "bg-secondary/30"
+                            (theme === 'dark' || theme === 'gray') ? "bg-muted/30" : "bg-[#f4f4f5]"
                           )}>
                             <pre className="text-xs font-mono overflow-x-auto whitespace-pre-wrap text-muted-foreground">
                               {afterReminder}
@@ -701,7 +718,7 @@ const StreamMessageComponent: React.FC<StreamMessageProps> = ({ message, classNa
                       </div>
                       <div className={cn(
                         "ml-6 p-2 rounded border border-border/30",
-                        (theme === 'dark' || theme === 'gray') ? "bg-muted/30" : "bg-secondary/30"
+                        (theme === 'dark' || theme === 'gray') ? "bg-muted/30" : "bg-[#f4f4f5]"
                       )}>
                         <pre className="text-xs font-mono overflow-x-auto whitespace-pre-wrap text-muted-foreground">
                           {contentText}

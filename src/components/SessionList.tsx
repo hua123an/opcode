@@ -8,6 +8,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { truncateText, getFirstLine } from "@/lib/date-utils";
 import type { Session, ClaudeMdFile } from "@/lib/api";
+import { useTheme } from "@/hooks";
 
 interface SessionListProps {
   /**
@@ -56,6 +57,7 @@ export const SessionList: React.FC<SessionListProps> = ({
   onEditClaudeFile,
   className,
 }) => {
+  const { theme } = useTheme();
   const [currentPage, setCurrentPage] = useState(1);
 
   // Calculate pagination
@@ -123,7 +125,7 @@ export const SessionList: React.FC<SessionListProps> = ({
                         <div className="flex items-center gap-2 flex-1 min-w-0">
                           <div className={cn(
                             "p-1.5 rounded-md shrink-0 transition-colors",
-                            session.todo_data ? "bg-primary/20 text-primary" : "bg-secondary text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary"
+                            session.todo_data ? "bg-primary/20 text-primary" : ((theme === 'dark' || theme === 'gray') ? "bg-muted text-muted-foreground" : "bg-[#f4f4f5] text-muted-foreground") + " group-hover:bg-primary/10 group-hover:text-primary"
                           )}>
                             <Clock className="h-3.5 w-3.5" />
                           </div>

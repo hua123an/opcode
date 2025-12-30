@@ -207,7 +207,7 @@ export const LSWidget: React.FC<{ path: string; result?: any }> = ({ path, resul
       <div className="space-y-2">
         <div className={cn(
           "flex items-center gap-2 p-3 rounded-lg border transition-colors",
-          (theme === 'dark' || theme === 'gray') ? "bg-muted/50 border-white/5" : "bg-muted/30 border-black/5"
+          (theme === 'dark' || theme === 'gray') ? "bg-muted/30 border-white/10" : "bg-card border-border"
         )}>
           <FolderOpen className="h-4 w-4 text-primary" />
           <span className="text-sm">Directory contents for:</span>
@@ -221,7 +221,10 @@ export const LSWidget: React.FC<{ path: string; result?: any }> = ({ path, resul
   }
 
   return (
-    <div className="flex items-center gap-2 p-3 rounded-lg bg-muted/50">
+    <div className={cn(
+      "flex items-center gap-2 p-3 rounded-lg border transition-colors",
+      (theme === 'dark' || theme === 'gray') ? "bg-muted/30 border-white/10" : "bg-card border-border"
+    )}>
       <FolderOpen className="h-4 w-4 text-primary" />
       <span className="text-sm">Listing directory:</span>
       <code className="text-sm font-mono bg-background px-2 py-0.5 rounded">
@@ -434,7 +437,7 @@ export const ReadWidget: React.FC<{ filePath: string; result?: any }> = ({ fileP
       <div className="space-y-2">
         <div className={cn(
           "flex items-center gap-2 p-3 rounded-lg border transition-colors",
-          (theme === 'dark' || theme === 'gray') ? "bg-muted/50 border-white/5" : "bg-muted/30 border-black/5"
+          (theme === 'dark' || theme === 'gray') ? "bg-muted/30 border-white/10" : "bg-card border-border"
         )}>
           <FileText className="h-4 w-4 text-primary" />
           <span className="text-sm">File content:</span>
@@ -450,7 +453,7 @@ export const ReadWidget: React.FC<{ filePath: string; result?: any }> = ({ fileP
   return (
     <div className={cn(
       "flex items-center gap-2 p-3 rounded-lg border transition-colors",
-      (theme === 'dark' || theme === 'gray') ? "bg-muted/50 border-white/5" : "bg-muted/30 border-black/5"
+      (theme === 'dark' || theme === 'gray') ? "bg-muted/30 border-white/10" : "bg-card border-border"
     )}>
       <FileText className="h-4 w-4 text-primary" />
       <span className="text-sm">Reading file:</span>
@@ -576,8 +579,8 @@ export const ReadResultWidget: React.FC<{ content: string; filePath?: string }> 
   const isLargeFile = lineCount > 20;
 
   return (
-    <div className="rounded-lg overflow-hidden border bg-background w-full">
-      <div className="px-4 py-2 border-b bg-muted/50 flex items-center justify-between">
+    <div className="rounded-lg overflow-hidden border border-border bg-card w-full">
+      <div className="px-4 py-2 border-b border-border bg-muted/20 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <FileText className="h-3.5 w-3.5 text-muted-foreground" />
           <span className="text-xs font-mono text-muted-foreground">
@@ -669,7 +672,7 @@ export const GlobWidget: React.FC<{ pattern: string; result?: any }> = ({ patter
     <div className="space-y-2">
       <div className={cn(
         "flex items-center gap-2 p-3 rounded-lg border transition-colors",
-        (theme === 'dark' || theme === 'gray') ? "bg-muted/50 border-white/5" : "bg-muted/30 border-black/5"
+        (theme === 'dark' || theme === 'gray') ? "bg-muted/30 border-white/10" : "bg-card border-border"
       )}>
         <Search className="h-4 w-4 text-primary" />
         <span className="text-sm">Searching for pattern:</span>

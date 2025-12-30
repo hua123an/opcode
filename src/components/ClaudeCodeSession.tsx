@@ -511,7 +511,16 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
 
         // Parse and display
         const message = JSON.parse(event.payload) as ClaudeStreamMessage;
-        setMessages(prev => [...prev, message]);
+
+        // Avoid duplicate messages by checking UUID
+        setMessages(prev => {
+          // Check if message with same UUID already exists
+          if (message.uuid && prev.some(m => m.uuid === message.uuid)) {
+            console.log('[ClaudeCodeSession] Skipping duplicate message:', message.uuid);
+            return prev;
+          }
+          return [...prev, message];
+        });
       } catch (err) {
         console.error("Failed to parse message:", err, event.payload);
       }
@@ -848,7 +857,13 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
               sessionMetrics.current.errorsEncountered += 1;
             }
 
-            setMessages((prev) => [...prev, message]);
+            // Avoid duplicate messages
+            setMessages((prev) => {
+              if (message.uuid && prev.some(m => m.uuid === message.uuid)) {
+                return prev;
+              }
+              return [...prev, message];
+            });
           } catch (err) {
             console.error('Failed to parse message:', err, payload);
           }

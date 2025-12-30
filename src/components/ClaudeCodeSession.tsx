@@ -859,9 +859,40 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
 
             // Avoid duplicate messages
             setMessages((prev) => {
+              // Check UUID-based duplicates
               if (message.uuid && prev.some(m => m.uuid === message.uuid)) {
                 return prev;
               }
+
+              // For user messages with text content, check if we already have a user message with the same text
+              // This prevents Claude's returned user message from duplicating our locally added one
+              if (message.type === 'user' && message.message?.content) {
+                const messageText = Array.isArray(message.message.content)
+                  ? message.message.content
+                    .filter((c: any) => c.type === 'text')
+                    .map((c: any) => c.text)
+                    .join('')
+                  : '';
+
+                if (messageText) {
+                  const hasDuplicateUserMessage = prev.some(m => {
+                    if (m.type !== 'user' || !m.message?.content) return false;
+                    const existingText = Array.isArray(m.message.content)
+                      ? m.message.content
+                        .filter((c: any) => c.type === 'text')
+                        .map((c: any) => c.text)
+                        .join('')
+                      : '';
+                    return existingText === messageText;
+                  });
+
+                  if (hasDuplicateUserMessage) {
+                    console.log('[ClaudeCodeSession] Skipping duplicate user message with same text');
+                    return prev;
+                  }
+                }
+              }
+
               return [...prev, message];
             });
           } catch (err) {
@@ -988,6 +1019,7 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
         // Add the user message immediately to the UI (after setting up listeners)
         const userMessage: ClaudeStreamMessage = {
           type: "user",
+          uuid: `user-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
           message: {
             content: [
               {

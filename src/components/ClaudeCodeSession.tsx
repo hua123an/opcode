@@ -33,6 +33,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { TooltipProvider, TooltipSimple } from "@/components/ui/tooltip-modern";
 import { SplitPane } from "@/components/ui/split-pane";
 import { WebviewPreview } from "./WebviewPreview";
+import { WorkspacePanel } from "./WorkspacePanel";
 import type { ClaudeStreamMessage } from "./AgentExecution";
 import { useTrackEvent, useComponentMetrics, useWorkflowTracking } from "@/hooks";
 import { SessionPersistenceService } from "@/services/sessionPersistence";
@@ -1548,231 +1549,225 @@ export const ClaudeCodeSession: React.FC<ClaudeCodeSessionProps> = ({
 
           {/* Main Content Area */}
           <div className={cn(
-            "flex-1 overflow-hidden transition-all duration-300 relative",
+            "flex-1 overflow-hidden transition-all duration-300 relative h-full",
             showTimeline && "sm:mr-96"
           )}>
-            {showPreview ? (
-              // Split pane layout when preview is active
-              <SplitPane
-                left={
-                  <div className="h-full flex flex-col">
-                    {projectPathInput}
+            <SplitPane
+              initialSplit={40}
+              minLeftWidth={350}
+              minRightWidth={400}
+              className="h-full"
+              left={
+                <div className="h-full flex flex-col relative bg-background">
+                  {/* Messages Area */}
+                  <div className="flex-1 overflow-hidden relative flex flex-col">
                     {messagesList}
-                  </div>
-                }
-                right={
-                  <WebviewPreview
-                    initialUrl={previewUrl}
-                    onClose={handleClosePreview}
-                    isMaximized={isPreviewMaximized}
-                    onToggleMaximize={handleTogglePreviewMaximize}
-                    onUrlChange={handlePreviewUrlChange}
-                  />
-                }
-                initialSplit={splitPosition}
-                onSplitChange={setSplitPosition}
-                minLeftWidth={400}
-                minRightWidth={400}
-                className="h-full"
-              />
-            ) : (
-              // Original layout when no preview
-              <div className="h-full flex flex-col max-w-6xl mx-auto px-6">
-                {projectPathInput}
-                {messagesList}
 
-                {isLoading && messages.length === 0 && (
-                  <div className="flex items-center justify-center h-full">
-                    <div className="flex items-center gap-3">
-                      <div className="rotating-symbol text-primary" />
-                      <span className="text-sm text-muted-foreground">
-                        {session ? "Loading session history..." : "Initializing Claude Code..."}
-                      </span>
-                    </div>
+                    {isLoading && messages.length === 0 && (
+                      <div className="flex-1 flex items-center justify-center">
+                        <div className="flex items-center gap-3">
+                          <div className="rotating-symbol text-primary" />
+                          <span className="text-sm text-muted-foreground">
+                            {session ? "Loading session history..." : "Initializing Claude Code..."}
+                          </span>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            )}
+
+                  {/* Docked Input Area */}
+                  <ErrorBoundary>
+                    <div className="border-t bg-muted/5 relative z-20">
+                      {/* Queued Prompts (Absolute above input) */}
+                      <AnimatePresence>
+                        {queuedPrompts.length > 0 && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 10 }}
+                            className="absolute bottom-full left-0 right-0 z-30 w-full px-4 pb-2"
+                          >
+                            <div className="bg-background/95 backdrop-blur-md border rounded-lg shadow-lg p-3 space-y-2">
+                              <div className="flex items-center justify-between">
+                                <div className="text-xs font-medium text-muted-foreground mb-1">
+                                  Queued Prompts ({queuedPrompts.length})
+                                </div>
+                                <TooltipSimple content={queuedPromptsCollapsed ? "Expand queue" : "Collapse queue"} side="top">
+                                  <motion.div
+                                    whileTap={{ scale: 0.97 }}
+                                    transition={{ duration: 0.15 }}
+                                  >
+                                    <Button variant="ghost" size="icon" onClick={() => setQueuedPromptsCollapsed(prev => !prev)}>
+                                      {queuedPromptsCollapsed ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+                                    </Button>
+                                  </motion.div>
+                                </TooltipSimple>
+                              </div>
+                              {!queuedPromptsCollapsed && queuedPrompts.map((queuedPrompt, index) => (
+                                <motion.div
+                                  key={queuedPrompt.id}
+                                  initial={{ opacity: 0, y: 4 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0, y: -4 }}
+                                  transition={{ duration: 0.15, delay: index * 0.02 }}
+                                  className="flex items-start gap-2 bg-muted/50 rounded-md p-2"
+                                >
+                                  <div className="flex-1 min-w-0">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <span className="text-xs font-medium text-muted-foreground">#{index + 1}</span>
+                                      <span className="text-xs px-1.5 py-0.5 bg-primary/10 text-primary rounded">
+                                        {queuedPrompt.model === "opus" ? "Opus" : "Sonnet"}
+                                      </span>
+                                    </div>
+                                    <p className="text-sm line-clamp-2 break-words">{queuedPrompt.prompt}</p>
+                                  </div>
+                                  <motion.div
+                                    whileTap={{ scale: 0.97 }}
+                                    transition={{ duration: 0.15 }}
+                                  >
+                                    <Button
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-6 w-6 flex-shrink-0"
+                                      onClick={() => setQueuedPrompts(prev => prev.filter(p => p.id !== queuedPrompt.id))}
+                                    >
+                                      <X className="h-3 w-3" />
+                                    </Button>
+                                  </motion.div>
+                                </motion.div>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+
+                      <FloatingPromptInput
+                        ref={floatingPromptRef}
+                        isFixed={false}
+                        defaultModel="claude-sonnet-4-5-20250929"
+                        onSend={handleSendPrompt}
+                        onCancel={handleCancelExecution}
+                        isLoading={isLoading}
+                        disabled={!projectPath}
+                        projectPath={projectPath}
+                        className="shadow-none border-none bg-transparent py-4 px-4"
+                        extraMenuItems={
+                          <div className="flex items-center gap-1">
+                            {totalTokens > 0 && (
+                              <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mr-2 font-mono opacity-60">
+                                <Hash className="h-2.5 w-2.5" />
+                                <span>{totalTokens.toLocaleString()}</span>
+                              </div>
+                            )}
+                            {effectiveSession && (
+                              <TooltipSimple content="Session Timeline" side="top">
+                                <motion.div
+                                  whileTap={{ scale: 0.97 }}
+                                  transition={{ duration: 0.15 }}
+                                >
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => setShowTimeline(!showTimeline)}
+                                    className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                                  >
+                                    <GitBranch className={cn("h-3.5 w-3.5", showTimeline && "text-primary")} />
+                                  </Button>
+                                </motion.div>
+                              </TooltipSimple>
+                            )}
+                            {messages.length > 0 && (
+                              <Popover
+                                trigger={
+                                  <TooltipSimple content="Copy conversation" side="top">
+                                    <motion.div
+                                      whileTap={{ scale: 0.97 }}
+                                      transition={{ duration: 0.15 }}
+                                    >
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                                      >
+                                        <Copy className="h-3.5 w-3.5" />
+                                      </Button>
+                                    </motion.div>
+                                  </TooltipSimple>
+                                }
+                                content={
+                                  <div className="w-44 p-1">
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => {
+                                        handleCopyAsMarkdown();
+                                        setCopyPopoverOpen(false);
+                                      }}
+                                      className="w-full justify-start text-xs font-normal"
+                                    >
+                                      <Copy className="mr-2 h-3 w-3" />
+                                      Copy as Markdown
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => {
+                                        handleCopyAsJsonl();
+                                        setCopyPopoverOpen(false);
+                                      }}
+                                      className="w-full justify-start text-xs font-normal"
+                                    >
+                                      <FileText className="mr-2 h-3 w-3" />
+                                      Copy as JSONL
+                                    </Button>
+                                  </div>
+                                }
+                                open={copyPopoverOpen}
+                                onOpenChange={setCopyPopoverOpen}
+                                align="end"
+                                side="top"
+                              />
+                            )}
+                            <TooltipSimple content="Session Settings" side="top">
+                              <motion.div
+                                whileTap={{ scale: 0.97 }}
+                                transition={{ duration: 0.15 }}
+                              >
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => setShowSettings(!showSettings)}
+                                  className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                                >
+                                  <Wrench className={cn("h-3.5 w-3.5", showSettings && "text-primary")} />
+                                </Button>
+                              </motion.div>
+                            </TooltipSimple>
+                          </div>
+                        }
+                      />
+                    </div>
+                  </ErrorBoundary>
+                </div>
+              }
+              right={
+                <WorkspacePanel
+                  projectPath={projectPath}
+                  previewUrl={previewUrl}
+                  onPreviewClose={handleClosePreview}
+                  isPreviewMaximized={isPreviewMaximized}
+                  onTogglePreviewMaximize={handleTogglePreviewMaximize}
+                  onPreviewUrlChange={handlePreviewUrlChange}
+                />
+              }
+              initialSplit={splitPosition}
+              onSplitChange={setSplitPosition}
+              minLeftWidth={400}
+              minRightWidth={400}
+              className="h-full"
+            />
           </div>
 
-          {/* Floating Prompt Input - Always visible */}
-          <ErrorBoundary>
-            {/* Queued Prompts Display */}
-            <AnimatePresence>
-              {queuedPrompts.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  className="fixed bottom-24 left-1/2 -translate-x-1/2 z-30 w-full max-w-3xl px-4"
-                >
-                  <div className="bg-background/95 backdrop-blur-md border rounded-lg shadow-lg p-3 space-y-2">
-                    <div className="flex items-center justify-between">
-                      <div className="text-xs font-medium text-muted-foreground mb-1">
-                        Queued Prompts ({queuedPrompts.length})
-                      </div>
-                      <TooltipSimple content={queuedPromptsCollapsed ? "Expand queue" : "Collapse queue"} side="top">
-                        <motion.div
-                          whileTap={{ scale: 0.97 }}
-                          transition={{ duration: 0.15 }}
-                        >
-                          <Button variant="ghost" size="icon" onClick={() => setQueuedPromptsCollapsed(prev => !prev)}>
-                            {queuedPromptsCollapsed ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-                          </Button>
-                        </motion.div>
-                      </TooltipSimple>
-                    </div>
-                    {!queuedPromptsCollapsed && queuedPrompts.map((queuedPrompt, index) => (
-                      <motion.div
-                        key={queuedPrompt.id}
-                        initial={{ opacity: 0, y: 4 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -4 }}
-                        transition={{ duration: 0.15, delay: index * 0.02 }}
-                        className="flex items-start gap-2 bg-muted/50 rounded-md p-2"
-                      >
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-xs font-medium text-muted-foreground">#{index + 1}</span>
-                            <span className="text-xs px-1.5 py-0.5 bg-primary/10 text-primary rounded">
-                              {queuedPrompt.model === "opus" ? "Opus" : "Sonnet"}
-                            </span>
-                          </div>
-                          <p className="text-sm line-clamp-2 break-words">{queuedPrompt.prompt}</p>
-                        </div>
-                        <motion.div
-                          whileTap={{ scale: 0.97 }}
-                          transition={{ duration: 0.15 }}
-                        >
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-6 w-6 flex-shrink-0"
-                            onClick={() => setQueuedPrompts(prev => prev.filter(p => p.id !== queuedPrompt.id))}
-                          >
-                            <X className="h-3 w-3" />
-                          </Button>
-                        </motion.div>
-                      </motion.div>
-                    ))}
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            <div
-              className={cn(
-                "w-full transition-all duration-300 z-50 shrink-0",
-                showTimeline && "sm:pr-96"
-              )}
-            >
-              <FloatingPromptInput
-                ref={floatingPromptRef}
-                isFixed={false}
-                defaultModel="claude-sonnet-4-5-20250929"
-                onSend={handleSendPrompt}
-                onCancel={handleCancelExecution}
-                isLoading={isLoading}
-                disabled={!projectPath}
-                projectPath={projectPath}
-                extraMenuItems={
-                  <div className="flex items-center gap-1">
-                    {totalTokens > 0 && (
-                      <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mr-2 font-mono opacity-60">
-                        <Hash className="h-2.5 w-2.5" />
-                        <span>{totalTokens.toLocaleString()}</span>
-                      </div>
-                    )}
-                    {effectiveSession && (
-                      <TooltipSimple content="Session Timeline" side="top">
-                        <motion.div
-                          whileTap={{ scale: 0.97 }}
-                          transition={{ duration: 0.15 }}
-                        >
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setShowTimeline(!showTimeline)}
-                            className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                          >
-                            <GitBranch className={cn("h-3.5 w-3.5", showTimeline && "text-primary")} />
-                          </Button>
-                        </motion.div>
-                      </TooltipSimple>
-                    )}
-                    {messages.length > 0 && (
-                      <Popover
-                        trigger={
-                          <TooltipSimple content="Copy conversation" side="top">
-                            <motion.div
-                              whileTap={{ scale: 0.97 }}
-                              transition={{ duration: 0.15 }}
-                            >
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                              >
-                                <Copy className="h-3.5 w-3.5" />
-                              </Button>
-                            </motion.div>
-                          </TooltipSimple>
-                        }
-                        content={
-                          <div className="w-44 p-1">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => {
-                                handleCopyAsMarkdown();
-                                setCopyPopoverOpen(false);
-                              }}
-                              className="w-full justify-start text-xs font-normal"
-                            >
-                              <Copy className="mr-2 h-3 w-3" />
-                              Copy as Markdown
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => {
-                                handleCopyAsJsonl();
-                                setCopyPopoverOpen(false);
-                              }}
-                              className="w-full justify-start text-xs font-normal"
-                            >
-                              <FileText className="mr-2 h-3 w-3" />
-                              Copy as JSONL
-                            </Button>
-                          </div>
-                        }
-                        open={copyPopoverOpen}
-                        onOpenChange={setCopyPopoverOpen}
-                        align="end"
-                        side="top"
-                      />
-                    )}
-                    <TooltipSimple content="Session Settings" side="top">
-                      <motion.div
-                        whileTap={{ scale: 0.97 }}
-                        transition={{ duration: 0.15 }}
-                      >
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setShowSettings(!showSettings)}
-                          className="h-8 w-8 text-muted-foreground hover:text-foreground"
-                        >
-                          <Wrench className={cn("h-3.5 w-3.5", showSettings && "text-primary")} />
-                        </Button>
-                      </motion.div>
-                    </TooltipSimple>
-                  </div>
-                }
-              />
-            </div>
-
-          </ErrorBoundary>
 
           {/* Timeline */}
           <AnimatePresence>
